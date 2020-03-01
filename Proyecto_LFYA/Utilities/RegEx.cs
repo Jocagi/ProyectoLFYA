@@ -9,6 +9,7 @@ namespace Proyecto_LFYA.Utilities
     class RegEx
     {
         //Regular Expression
+        DFA automaton;
 
         RegEx(string expression)
         {

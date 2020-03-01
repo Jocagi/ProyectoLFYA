@@ -6,26 +6,68 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class TransitionTable
+    class TransitionTable:ExpressionCharacters
     {
         //Dictionary with posible next positions
-        public Dictionary<int, Dictionary<char, int>> Table { get; set; }
-        private Stack<char> characters = new Stack<char>();
+        public List<Follow> nodes = new List<Follow>(); 
 
         public TransitionTable(ExpressionTree tree)
         {
-            evaluateTree(tree.root);
+            nodes.Add(new Follow(' ')); //Set apart first position, to use it later as an initial state
+            evaluateTree(tree.root); //Get all the follows
         }
 
-        private void evaluateTree(Node node)
+        private void evaluateTree(Node tree)
         {
-            if (node.isLeaf())
+            getEnumeration(tree);
+            getFollowPos(tree);
+        }
+
+        private void getEnumeration(Node root)
+        {
+            if (root.isLeaf())
             {
-                characters.Push(node.element);
+                nodes.Add(new Follow(root.element));
             }
             else
             {
-                    
+                getEnumeration(root.left);
+                getEnumeration(root.right);
+            }
+        }
+
+        private void getFollowPos(Node node)
+        {
+            if (node != null)
+            {
+                getFollowPos(node.left);
+                getFollowPos(node.right);
+
+                if (!node.isLeaf())
+                {
+
+                    if (node.element == Concatenation && node.left != null && node.right != null)
+                    {
+                        //Being "i" a position in lastPos(c1) 
+                        //Then all positions in firstPos(c2) are in followPos(i)
+
+                        foreach (var item in node.left.lastPos)
+                        {
+                            nodes[item].follows = nodes[item].follows.Concat(node.right.firstPos).ToList(); 
+                        }
+
+                    }
+                    else if (node.element == KleenePlus || node.element == KleeneStar)
+                    {
+                        //Being "n" this node and "i" a position in lastPos(n) 
+                        //Then all positions in firstPos(n) are in followPos(i)
+
+                        foreach (var item in node.lastPos)
+                        {
+                            nodes[item].follows = nodes[item].follows.Concat(node.firstPos).ToList();
+                        }
+                    }
+                }
             }
         }
     }

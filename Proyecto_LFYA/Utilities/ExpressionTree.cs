@@ -3,29 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class ExpressionTree
+    class ExpressionTree:ExpressionCharacters
     {
         public Node root;
-
-        #region Characters
-        //Characters of expression
-        private const char Concatenation = '.';
-        private const char Alternation = '|';
-        private const char Escape = '\\';
-        private const char KleeneStar = '*';
-        private const char KleenePlus = '+';
-        private const char QuestionMark = '?';
-        private const char Grouping_Open = '(';
-        private const char Grouping_Close = ')';
-        private const char EndCharacter = '#';
-        private const char Epsilon = 'ε';
-
-        #endregion
-
+        
         private ExpressionTree()
         {
             this.root = null;
@@ -38,7 +22,9 @@ namespace Proyecto_LFYA.Utilities
             shuntingYard(Tokens);
 
             setNumberInNodes();
-
+            setNullableNodes();
+            setFirstPos();
+            setLastPos();
         }
         
         private Queue<char> getTokensFromExpression(string expression)
@@ -270,8 +256,11 @@ namespace Proyecto_LFYA.Utilities
         {
             if (i.isLeaf())
             {
-                i.number = number;
-                number++;
+                if (i.element != Epsilon)
+                {
+                    i.number = number;
+                    number++;
+                }
             }
             else
             {
