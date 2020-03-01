@@ -1,0 +1,10 @@
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.csprojAssemblyReference.cache
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.Form1.resources
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.Properties.Resources.resources
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.csproj.GenerateResource.cache
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\bin\Debug\Proyecto_LFYA.exe.config
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\bin\Debug\Proyecto_LFYA.exe
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\bin\Debug\Proyecto_LFYA.pdb
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.exe
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.pdb

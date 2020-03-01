@@ -8,14 +8,23 @@ namespace Proyecto_LFYA.Utilities
 {
     class Node
     {
+        public int number { set; get; }
+        public List<int> firstPos { set; get; }
+        public List<int> lastPos { set; get; }
+        public bool nullable { set; get; }
+
         public char element { set; get; }
         public Node left { set; get; }
         public Node right { set; get; }
-
+        
+        //Functions
         public Node() { }
         public Node(char element)
         {
             this.element = element;
+
+            firstPos = new List<int>();
+            lastPos = new List<int>();
         }
         public Node(char element, Node left, Node right)
         {
@@ -30,24 +39,24 @@ namespace Proyecto_LFYA.Utilities
             this.right = new Node (right);
         }
 
-        public string Inorden()
+        public string Inorder()
         {
-            return Inorden(this);
+            return Inorder(this);
         }
-        private string Inorden(Node root)
+        private string Inorder(Node root)
         {
             string result = "";
 
             if (root.left != null)
             {
-                result += Inorden(root.left);
+                result += Inorder(root.left);
             }
 
             result += root.element;
 
             if (root.right != null)
             {
-                result += Inorden(root.right);
+                result += Inorder(root.right);
             }
 
             return result;
@@ -58,6 +67,6 @@ namespace Proyecto_LFYA.Utilities
          
    return this.left == null && this.right == null;
         }
-
+        
     }
 }

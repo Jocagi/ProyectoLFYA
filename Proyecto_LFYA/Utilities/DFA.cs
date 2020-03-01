@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class GrammarTable
+    class DFA
     {
-       
+
     }
 }

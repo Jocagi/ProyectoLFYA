@@ -16,7 +16,7 @@ namespace Proyecto_LFYA.Utilities
 
             //Create an expression tree
 
-            //Create a Table
+            //Create Table
 
             //Set table to local variable
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Proyecto_LFYA.Utilities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,17 @@ namespace Proyecto_LFYA
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ExpressionTree tree = new ExpressionTree(textExpression.Text);
+            labelResult.Text = tree.root.Inorder();
         }
     }
 }

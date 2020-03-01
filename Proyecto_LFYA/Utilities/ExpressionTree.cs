@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Proyecto_LFYA.Utilities
 {
@@ -12,15 +13,16 @@ namespace Proyecto_LFYA.Utilities
 
         #region Characters
         //Characters of expression
-        private readonly char Concatenation = '.';
-        private readonly char Alternation = '|';
-        private readonly char Escape = '\\';
-        private readonly char Asterisk = '*';
-        private readonly char Plus = '+';
-        private readonly char QuestionMark = '?';
-        private readonly char Grouping_Open = '(';
-        private readonly char Grouping_Close = ')';
-        private readonly char EndCharacter = '#';
+        private const char Concatenation = '.';
+        private const char Alternation = '|';
+        private const char Escape = '\\';
+        private const char KleeneStar = '*';
+        private const char KleenePlus = '+';
+        private const char QuestionMark = '?';
+        private const char Grouping_Open = '(';
+        private const char Grouping_Close = ')';
+        private const char EndCharacter = '#';
+        private const char Epsilon = 'ε';
 
         #endregion
 
@@ -34,6 +36,9 @@ namespace Proyecto_LFYA.Utilities
             //Shunting yard algorithm to generate tree
             Queue<char> Tokens = getTokensFromExpression(expression);
             shuntingYard(Tokens);
+
+            setNumberInNodes();
+
         }
         
         private Queue<char> getTokensFromExpression(string expression)
@@ -47,8 +52,13 @@ namespace Proyecto_LFYA.Utilities
             for (int i = 0; i < lenght; i++)
             {
                 int itemsLeft = lenght - i;
-               
-                if (expression[i] == Escape)
+
+                if (expression[i] == EndCharacter)
+                {
+                    tokens.Enqueue(expression[i]);
+                    break;
+                }
+                else if (expression[i] == Escape)
                 {
                     tokens.Enqueue(expression[i]);
                     tokens.Enqueue(expression[i + 1]);
@@ -71,7 +81,7 @@ namespace Proyecto_LFYA.Utilities
         
         private bool isASingleOperationChar(char item)
         {
-            char[] SpecialCharacters = { Asterisk, Plus, QuestionMark };
+            char[] SpecialCharacters = { KleeneStar, KleenePlus, QuestionMark };
 
             if (SpecialCharacters.Contains(item))
             {
@@ -186,7 +196,9 @@ namespace Proyecto_LFYA.Utilities
                             throw new Exception("Faltan operandos");
                         }
                     }
-                    else if (T.Count > 0 && T.Peek() != Grouping_Open && ((T.Peek() == Concatenation && token == Alternation)))
+                    else if (T.Count > 0 && T.Peek() != Grouping_Open && 
+                                ((T.Peek() == Concatenation && token == Alternation) ||
+                                    (T.Peek() == token)))
                     {
                         // Operation order:
                         // aleternation(|) has less precedence than concat(.)
@@ -199,6 +211,7 @@ namespace Proyecto_LFYA.Utilities
                             temp.left = S.Pop();
 
                             S.Push(temp);
+                            T.Push(token);
                         }
                         else
                         {
@@ -243,6 +256,217 @@ namespace Proyecto_LFYA.Utilities
             else
             {
                 throw new Exception("Faltan operandos"); 
+            }
+        }
+
+        //Follow Functions
+
+        private void setNumberInNodes()
+        {
+            int number = 1;
+            setNumberInNodes(ref root, ref number);
+        }
+        private void setNumberInNodes(ref Node i, ref int number)
+        {
+            if (i.isLeaf())
+            {
+                i.number = number;
+                number++;
+            }
+            else
+            {
+                if (i.left != null)
+                {
+                    Node k = i.left;
+                    setNumberInNodes(ref k, ref number);
+                    i.left = k;
+                }
+                if (i.right != null)
+                {
+                    Node k = i.right;
+                    setNumberInNodes(ref k, ref number);
+                    i.right = k;
+                }
+            }
+        }
+
+        private void setNullableNodes()
+        {
+            setNullableNodes(ref root);
+        }
+        private void setNullableNodes(ref Node i)
+        {
+            if (i.isLeaf())
+            {
+                i.nullable = i.element == Epsilon;
+            }
+            else
+            {
+                //First, get nullable states from child. (Postorder)
+                if (i.left != null)
+                {
+                    Node k = i.left;
+                    setNullableNodes(ref k);
+                    i.left = k;
+                }
+                if (i.right != null)
+                {
+                    Node k = i.right;
+                    setNullableNodes(ref k);
+                    i.right = k;
+                }
+
+                //Rules
+                switch (i.element)
+                {
+                    case Alternation: //nullable(c1) or nullable(c2)
+                        i.nullable = i.right.nullable || i.left.nullable; 
+                        break;
+                    case Concatenation: //nullable(c1) and nullable(c2)
+                        i.nullable = i.right.nullable && i.left.nullable;
+                        break;
+                    case KleeneStar:
+                        i.nullable = true;
+                        break;
+                    case KleenePlus:
+                        i.nullable = false;
+                        break;
+                    case QuestionMark:
+                        i.nullable = true;
+                        break;
+                    default:
+                        throw new Exception("Operacion no reconocida.");
+                }
+            }
+        }
+
+        private void setFirstPos()
+        {
+            setFirstPos(ref root);
+        }
+        private void setFirstPos(ref Node i)
+        {
+            if (i.isLeaf())
+            {
+                if (i.element != Epsilon)
+                {
+                    i.firstPos.Add(i.element);
+                }
+            }
+            else
+            {
+                //(Postorder)
+                if (i.left != null)
+                {
+                    Node k = i.left;
+                    setFirstPos(ref k);
+                    i.left = k;
+                }
+                if (i.right != null)
+                {
+                    Node k = i.right;
+                    setFirstPos(ref k);
+                    i.right = k;
+                }
+
+                //Rules
+                switch (i.element)
+                {
+                    case Alternation: //fistpos(c1) U fistpos(c2)
+                        i.firstPos = i.left.firstPos.Concat(i.right.firstPos).ToList();
+                        break;
+
+                    case Concatenation:
+                        if (i.left.nullable) //fistpos(c1) U fistpos(c2)
+                        {
+                            i.firstPos = i.left.firstPos.Concat(i.right.firstPos).ToList();
+                        }
+                        else //fistpos(c1)
+                        {
+                            i.firstPos = i.left.firstPos;
+                        }
+                        break;
+
+                    case KleeneStar: //fistpos(c1)
+                        i.firstPos = i.left.firstPos;
+                        break;
+
+                    case KleenePlus: //fistpos(c1)
+                        i.firstPos = i.left.firstPos;
+                        break;
+
+                    case QuestionMark: //fistpos(c1)
+                        i.firstPos = i.left.firstPos;
+                        break;
+
+                    default:
+                        throw new Exception("Operacion no reconocida.");
+                }
+            }
+        }
+
+        private void setLastPos()
+        {
+            setLastPos(ref root);
+        }
+        private void setLastPos(ref Node i)
+        {
+            if (i.isLeaf())
+            {
+                if (i.element != Epsilon)
+                {
+                    i.lastPos.Add(i.element);
+                }
+            }
+            else
+            {
+                //(Postorder)
+                if (i.left != null)
+                {
+                    Node k = i.left;
+                    setLastPos(ref k);
+                    i.left = k;
+                }
+                if (i.right != null)
+                {
+                    Node k = i.right;
+                    setLastPos(ref k);
+                    i.right = k;
+                }
+
+                //Rules
+                switch (i.element)
+                {
+                    case Alternation: //lastpos(c1) U lastpos(c2)
+                        i.lastPos = i.left.lastPos.Concat(i.right.lastPos).ToList();
+                        break;
+
+                    case Concatenation:
+                        if (i.right.nullable) //lastpos(c1) U lastpos(c2)
+                        {
+                            i.lastPos = i.left.lastPos.Concat(i.right.lastPos).ToList();
+                        }
+                        else //lastpos(c2)
+                        {
+                            i.lastPos = i.right.lastPos;
+                        }
+                        break;
+
+                    case KleeneStar: //lastpos(c1)
+                        i.lastPos = i.left.lastPos;
+                        break;
+
+                    case KleenePlus: //lastpos(c1)
+                        i.lastPos = i.left.lastPos;
+                        break;
+
+                    case QuestionMark: //lastpos(c1)
+                        i.lastPos = i.left.lastPos;
+                        break;
+
+                    default:
+                        throw new Exception("Operacion no reconocida.");
+                }
             }
         }
     }

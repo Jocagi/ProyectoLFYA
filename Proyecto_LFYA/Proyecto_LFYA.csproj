@@ -54,8 +54,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\DFA.cs" />
     <Compile Include="Utilities\ExpressionTree.cs" />
-    <Compile Include="Utilities\GrammarTable.cs" />
+    <Compile Include="Utilities\TransitionTable.cs" />
     <Compile Include="Utilities\Node.cs" />
     <Compile Include="Utilities\RegEx.cs" />
     <EmbeddedResource Include="Form1.resx">
