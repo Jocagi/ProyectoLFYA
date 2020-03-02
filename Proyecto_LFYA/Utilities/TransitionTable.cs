@@ -35,7 +35,11 @@ namespace Proyecto_LFYA.Utilities
             else
             {
                 getEnumeration(root.left);
-                getEnumeration(root.right);
+
+                if (root.right != null)
+                {
+                    getEnumeration(root.right);
+                }
             }
         }
 

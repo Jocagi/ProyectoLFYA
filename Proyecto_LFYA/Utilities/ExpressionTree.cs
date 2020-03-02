@@ -32,6 +32,7 @@ namespace Proyecto_LFYA.Utilities
             //    Adds each character from the string to a Queque including 
             //    concat (.) when the are two characters next to each other.
 
+            expression = expression.Replace("\\\\","\\");
             Queue<char> tokens = new Queue<char>();
             int lenght = expression.Length;
 
@@ -48,6 +49,7 @@ namespace Proyecto_LFYA.Utilities
                 {
                     tokens.Enqueue(expression[i]);
                     tokens.Enqueue(expression[i + 1]);
+                    tokens.Enqueue(Concatenation);
                     i++;
                 }
                 else if (isABinaryOperationChar(expression[i]) || expression[i] == Grouping_Open || 

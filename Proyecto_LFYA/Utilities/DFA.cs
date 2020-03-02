@@ -53,78 +53,96 @@ namespace Proyecto_LFYA.Utilities
             ref int longestPath, ref bool isCorrect)
 
         {
-            string followValues = "";
-            
+            string thisNodeFollowValues = "";
+
+            //If next is end node
             if (expression.Count == 0)
             {
-                if (states.nodes[position].follows.Count == 0)
+                foreach (var item in states.nodes[position].follows)
                 {
-                    if (states.nodes[position].isAcceptanceStatus)
+                    //Save possible next values if any of these appear 
+                    if (thisNodeFollowValues != "")
                     {
-                        isCorrect = true;
-                        return 2;
+                        thisNodeFollowValues = $"{thisNodeFollowValues} | {states.nodes[item].character}";
                     }
                     else
                     {
-                        expectedValue = states.nodes[position].character.ToString();
-                        return 0;
+                        thisNodeFollowValues = $"{states.nodes[item].character}";
                     }
+
+                    if (states.nodes[item].isAcceptanceStatus)
+                    {
+                        isCorrect = true;
+                        return 1;
+                    }
+                }
+
+                //Fixes bug that shows # as an expected value
+                expectedValue = states.nodes[position].isAcceptanceStatus ? 
+                                "menos caracteres" : thisNodeFollowValues;
+                
+                return 0;
+            }
+            //If end node and there still items in stack
+            else if (states.nodes[position].isAcceptanceStatus)
+            {
+                return 5;
+            }
+            //if middle node
+            else
+            {
+                //Character of this iteration
+                char nextCharacter = expression.Pop();
+                string tmpExpectedValue = "";
+                int tmpLongestPath = 0;
+                bool foundNextValue = false;
+
+                //Traverse follow values
+                foreach (var item in states.nodes[position].follows)
+                {
+                    //Save possible next values if any of these appear 
+                    if (thisNodeFollowValues != "")
+                    {
+                        thisNodeFollowValues = $"{thisNodeFollowValues} | {states.nodes[item].character}";
+                    }
+                    else
+                    {
+                        thisNodeFollowValues = $"{states.nodes[item].character}";
+                    }
+                    
+                    if (states.nodes[item].character == nextCharacter || states.nodes[item].isAcceptanceStatus)
+                    {
+                        //Mark flag for later use
+                        foundNextValue = true;
+
+                        //Check if this is not the correct path
+                        int tmp = pathCount(expression, item, ref tmpExpectedValue,
+                            ref tmpLongestPath, ref isCorrect);
+
+                        //Not efficient nor logical, but it works
+                        if (tmp == 5) //If final status is reached but there were still char in stack
+                        {
+                            tmpExpectedValue += states.nodes[position].character.ToString();
+                        }
+
+                        if (tmp >= longestPath)
+                        {
+                            expectedValue = tmpExpectedValue;
+                            longestPath = tmp;
+                        }
+                    }
+                }
+
+                //Analyze results for recursion
+                if (foundNextValue)
+                {
+                    return longestPath + 1;
                 }
                 else
                 {
-                    foreach (var item in states.nodes[position].follows)
-                    {
-                        followValues = $"{followValues} | {item}";
-
-                        if (states.nodes[item].isAcceptanceStatus)
-                        {
-                            isCorrect = true;
-                            return 2;
-                        }
-                    }
-
-                    expectedValue = followValues;
-                    return 0;
+                    expectedValue = thisNodeFollowValues;
+                    return 1;
                 }
-            }
-            
-            //Character of this iteration
-            char first = expression.Pop();
-            string tmpExpectedValue = "";
-            int tmpLongestPath = 0;
-            bool foundNextValue = false;
-            
-            //Traverse follow values
-            foreach (var item in states.nodes[0].follows)
-            {
-                followValues = $"{followValues} | {item}";
-                
-                if (states.nodes[item].character == first && expression.Count >= 0)
-                {
-                    //Mark flag
-                    foundNextValue = true;
-
-                    //Check if this is not the correct path
-                    int tmp = pathCount(expression, item, ref tmpExpectedValue,
-                        ref tmpLongestPath, ref isCorrect);
-
-                    if (tmp > longestPath)
-                    {
-                        expectedValue = tmpExpectedValue;
-                        longestPath = tmp;
-                    }
-                }
-            }
-
-            //Analyze results
-            if (foundNextValue)
-            {
-                return longestPath + 1;
-            }
-            else
-            {
-                expectedValue = followValues;
-                return 0;
             }
         }
     }

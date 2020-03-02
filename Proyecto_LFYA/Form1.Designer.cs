@@ -55,7 +55,7 @@
             this.textExpression.Name = "textExpression";
             this.textExpression.Size = new System.Drawing.Size(191, 26);
             this.textExpression.TabIndex = 1;
-            this.textExpression.Text = "(a|b)#";
+            this.textExpression.Text = "a+@(a|h)\\.com#";
             // 
             // label1
             // 
