@@ -27,6 +27,11 @@ namespace Proyecto_LFYA
         {
             ExpressionTree tree = new ExpressionTree(textExpression.Text);
             labelResult.Text = tree.root.Inorder();
+
+            RegEx reg = new RegEx(textExpression.Text);
+            string message = "";
+            reg.ValidateString(text.Text, ref message);
+            resultadoExpresion.Text = message;
         }
     }
 }

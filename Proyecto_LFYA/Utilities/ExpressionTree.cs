@@ -339,7 +339,7 @@ namespace Proyecto_LFYA.Utilities
             {
                 if (i.element != Epsilon)
                 {
-                    i.firstPos.Add(i.element);
+                    i.firstPos.Add(i.number);
                 }
             }
             else
@@ -404,7 +404,7 @@ namespace Proyecto_LFYA.Utilities
             {
                 if (i.element != Epsilon)
                 {
-                    i.lastPos.Add(i.element);
+                    i.lastPos.Add(i.number);
                 }
             }
             else
