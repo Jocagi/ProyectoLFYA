@@ -55,7 +55,7 @@
             this.textExpression.Name = "textExpression";
             this.textExpression.Size = new System.Drawing.Size(191, 26);
             this.textExpression.TabIndex = 1;
-            this.textExpression.Text = "a+@(a|h)\\.com#";
+            this.textExpression.Text = "(K|Km)#";
             // 
             // label1
             // 
@@ -98,7 +98,7 @@
             this.text.Name = "text";
             this.text.Size = new System.Drawing.Size(191, 26);
             this.text.TabIndex = 5;
-            this.text.Text = "a";
+            this.text.Text = "Km";
             // 
             // label4
             // 

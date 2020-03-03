@@ -114,9 +114,11 @@ namespace Proyecto_LFYA.Utilities
                     {
                         //Mark flag for later use
                         foundNextValue = true;
+                        Stack<char> NextExpression = new Stack<char>();
+                        NextExpression = expression;
 
                         //Check if this is not the correct path
-                        int tmp = pathCount(expression, item, ref tmpExpectedValue,
+                        int tmp = pathCount(NextExpression, item, ref tmpExpectedValue,
                             ref tmpLongestPath, ref isCorrect);
 
                         //Not efficient nor logical, but it works
@@ -136,13 +138,17 @@ namespace Proyecto_LFYA.Utilities
                 //Analyze results for recursion
                 if (foundNextValue)
                 {
+                    expression.Push(nextCharacter);
                     return longestPath + 1;
                 }
                 else
                 {
+                    expression.Push(nextCharacter);
                     expectedValue = thisNodeFollowValues;
                     return 1;
                 }
+
+                
             }
         }
     }

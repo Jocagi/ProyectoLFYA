@@ -1,7 +1,7 @@
 ﻿
 namespace Proyecto_LFYA.Utilities
 {
-    class RegEx
+    class RegEx:ExpressionCharacters
     {
         //Regular Expression
         DFA automaton;
@@ -10,7 +10,18 @@ namespace Proyecto_LFYA.Utilities
         {
             //Create an expression tree
             //Create and set Table
+            expression = replaceAbreviations(expression);
             automaton = new DFA(new TransitionTable(new ExpressionTree(expression)));
+        }
+
+        private string replaceAbreviations(string expression)
+        {
+            expression = expression.Replace(AbrevLetrasMayusculaRegex, LetrasMayusculaRegex);
+            expression = expression.Replace(AbrevLetrasMinusculaRegex, LetrasMinusculaRegex);
+            expression = expression.Replace(AbrevNumerosRegex, NumerosRegex);
+            expression = expression.Replace(AbrevSimbolosRegex, SimbolosRegex);
+
+            return expression;
         }
 
         public void ValidateString(string text, ref string message)

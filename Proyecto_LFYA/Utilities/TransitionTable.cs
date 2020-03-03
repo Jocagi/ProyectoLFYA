@@ -13,7 +13,7 @@ namespace Proyecto_LFYA.Utilities
 
         public TransitionTable(ExpressionTree tree)
         {
-            nodes.Add(new Follow(ExpressionCharacters.Epsilon)); //Set apart first position, to use it later as an initial state
+            nodes.Add(new Follow(Epsilon)); //Set apart first position, to use it later as an initial state
             evaluateTree(tree.root); //Get all the follows
 
             //Initial state
