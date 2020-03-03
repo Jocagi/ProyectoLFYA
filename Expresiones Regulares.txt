@@ -1,0 +1,68 @@
+Expresiones Regulares:
+Nota:Saltos de linea, y tabulaciones se toman como espacio
+------------------------------------------
+SETS?
+
+Ejemplo:
+	LETRA   = 'A'..'Z'+'a'..'z'+'_'
+	DIGITO  = '0'..'9'
+	CHARSET = CHR(32)..CHR(254)
+
+Expresion regular [Set individual]:
+
+[A-Z]+ *= *(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\([0-9]\)(..CHR\([0-9]\))?)|(CHR\([0-9]+\))((..CHR\([0-9]+\))?))(( *\+ *)(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\([0-9]\)(..CHR\([0-9]\))?)|(CHR\([0-9]+\))((..CHR\([0-9]+\))?)))*
+
+Expresion regular [De la seccion]:
+
+(( *SETS *)([A-Z]+ *= *(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\([0-9]\)(..CHR\([0-9]\))?)|(CHR\([0-9]+\))((..CHR\([0-9]+\))?))(( *\+ *)(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\([0-9]\)(..CHR\([0-9]\))?)|(CHR\([0-9]+\))((..CHR\([0-9]+\))?)))* *)+)?
+
+-------------------------------------------
+TOKENS
+Ejemplo:
+	TOKEN 1= DIGITO DIGITO *
+	TOKEN 2='"' CHARSET '"'|''' CHARSET '''
+	TOKEN  4  = '='
+	TOKEN  5  = '<''>'
+	TOKEN 3= LETRA ( LETRA | DIGITO )*   { RESERVADAS() }
+
+Expresion regular [Token Individual]:
+
+TOKEN *[0-9]+ *= *(([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9])')| |\?|\||\*|\+|\(|\)|({ *[A-Z]+\(\) *}))+
+
+Expresion regular [De la seccion]:
+
+(( *TOKENS *)(TOKEN *[0-9]+ *= *(([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9])')| |\?|\||\*|\+|\(|\)|({ *[A-Z]+\(\) *}))+ *)+)
+-------------------------------------------
+ACTIONS 
+
+Ejemplo:
+ACTIONS
+RESERVADAS() 
+{
+	18 = 'PROGRAM'
+	19 = 'INCLUDE'
+}
+ACTIONS RESERVADAS() {	18 = 'PROGRAM' 19 = 'INCLUDE' }
+
+Expresion Regular [De la seccion]:
+
+( *ACTIONS +RESERVADAS *\( *\) *{( *[0-9]+ *= *'[A-Z]+')+ *}([A-Z]+ *\( *\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)
+
+-------------------------------------------
+ERROR
+
+Ejemplo:
+ERROR = 54
+
+Expresion Regular [De la seccion]:
+( *[A-Z]+ *= *[0-9]+)+
+
+-------------------------------------------
+ARCHIVO COMPLETO
+
+Expresion regular:
+
+(( *SETS *)([A-Z]+ *= *(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\([0-9]\)(..CHR\([0-9]\))?)|(CHR\([0-9]+\))((..CHR\([0-9]+\))?))(( *\+ *)(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\([0-9]\)(..CHR\([0-9]\))?)|(CHR\([0-9]+\))((..CHR\([0-9]+\))?)))* *)+)?(( *TOKENS *)(TOKEN *[0-9]+ *= *(([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9])')| |\?|\||\*|\+|\(|\)|({ *[A-Z]+\(\) *}))+ *)+)( *ACTIONS +RESERVADAS *\( *\) *{( *[0-9]+ *= *'[A-Z]+')+ *}([A-Z]+ *\( *\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+#
+
+
+

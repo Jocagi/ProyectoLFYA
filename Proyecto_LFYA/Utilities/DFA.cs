@@ -138,12 +138,12 @@ namespace Proyecto_LFYA.Utilities
                 //Analyze results for recursion
                 if (foundNextValue)
                 {
-                    expression.Push(nextCharacter);
+                    expression.Push(nextCharacter); //Fixes bug with or operation
                     return longestPath + 1;
                 }
                 else
                 {
-                    expression.Push(nextCharacter);
+                    expression.Push(nextCharacter); //Fixes bug with or operation
                     expectedValue = thisNodeFollowValues;
                     return 1;
                 }

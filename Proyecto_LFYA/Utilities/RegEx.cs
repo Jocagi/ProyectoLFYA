@@ -28,6 +28,10 @@ namespace Proyecto_LFYA.Utilities
         {
             //Go through list veryfing each state met
             //Note: Only use error message if result is false
+
+            text = text.Replace('\n', ' ');
+            text = text.Replace('\r', ' ');
+            text = text.Replace('\t', ' ');
             automaton.isValidString(text, ref message);
         }
     }

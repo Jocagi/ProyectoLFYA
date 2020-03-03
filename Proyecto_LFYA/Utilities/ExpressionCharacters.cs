@@ -30,6 +30,6 @@ namespace Proyecto_LFYA.Utilities
         public const string NumerosRegex = "(0|1|2|3|4|5|6|7|8|9)";
 
         public const string AbrevSimbolosRegex = "[Simbolo]";
-        public const string SimbolosRegex = "([|}|$|@|!|%|^|&|*|-|_|:|;|<|>|,|\"|'|`|~)";
+        public const string SimbolosRegex = "(\\#|[|]|{|}|\\(|\\)|\\\\|$|@|!|%|^|&|\\*|\\+|-|_|.|:|/|;|<|>|,|\"|'|`|~|\\||=)";
     }
 }
