@@ -12,16 +12,12 @@ namespace Proyecto_LFYA.Utilities
         private static string expresionRegular = "(( *SETS *)([A-Z]+ *= *(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\\([0-9]\\)(..CHR\\([0-9]\\))?)|(CHR\\([0-9]+\\))((..CHR\\([0-9]+\\))?))(( *\\+ *)(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\\([0-9]\\)(..CHR\\([0-9]\\))?)|(CHR\\([0-9]+\\))((..CHR\\([0-9]+\\))?)))* *)+)?(( *TOKENS *)(TOKEN *[0-9]+ *= *(([A-Z]+)|(\\( *[A-Z] *)\\)|('([Simbolo]|[A-Z]|[a-z]|[0-9])')| |\\?|\\||\\*|\\+|\\(|\\)|({ *[A-Z]+\\(\\) *}))+ *)+)( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *}([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
         private static string expresionSET = " *[A-Z]+ *= *((('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\)))(..(('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\))))?)+ *#";
         private static string expresionTOKEN = "( *TOKEN *[0-9]+ *= *(([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\||\\*|\\+|({ *[A-Z]+\\(\\) *}))+ *)+#";
-        private static string expresionACTIONSYERROR = "( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *}([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
+        private static string expresionACTIONSYERROR = "( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *} *([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
 
         public static string analizarAchivoGramatica(string text)
         {
             text = text.Replace('\r', ' ');
             text = text.Replace('\t', ' ');
-
-            RegexOptions options = RegexOptions.None;
-            Regex regex = new Regex("[ ]{2,}", options);
-            text = regex.Replace(text, " ");
             
             text = text.TrimStart();
             text = text.TrimEnd();
@@ -38,8 +34,12 @@ namespace Proyecto_LFYA.Utilities
             bool setActive = false;
             bool tokenActive = false;
             bool actionActive = false;
+
+            int tokenCount = 0;
+            int setCount = 0;
+
             string[] lineas = text.Split('\n');
-            int count = 1;
+            int count = 0;
 
             foreach (var item in lineas)
             {
@@ -66,6 +66,10 @@ namespace Proyecto_LFYA.Utilities
                     {
                         if (item.Contains("TOKENS"))
                         {
+                            if (setCount < 1)
+                            {
+                                return "Error: Se esperaba almenos un SET";
+                            }
                             setActive = false;
                             tokenActive = true;
                         }
@@ -76,12 +80,17 @@ namespace Proyecto_LFYA.Utilities
                             {
                                 return $"Error en linea:{count}\n{mensaje}";
                             }
+                            setCount++;
                         }
                     }
                     else if (tokenActive)
                     {
                         if (item.Contains("ACTIONS"))
                         {
+                            if (tokenCount < 1)
+                            {
+                                return "Error: Se esperaba almenos un TOKEN";
+                            }
                             actions = "ACTIONS";
                             tokenActive = false;
                             actionActive = true;
@@ -93,6 +102,7 @@ namespace Proyecto_LFYA.Utilities
                             {
                                 return $"Error en linea:{count}\n{mensaje}";
                             }
+                            tokenCount++;
                         }
                     }
                     else if (actionActive)
