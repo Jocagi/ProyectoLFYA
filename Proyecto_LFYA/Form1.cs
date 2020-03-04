@@ -30,8 +30,7 @@ namespace Proyecto_LFYA
             try
             {
                 RegEx reg = new RegEx(textExpression.Text);
-                string message = "";
-                reg.ValidateString(text.Text, ref message);
+                string message = reg.ValidateString(text.Text);
                 resultadoExpresion.Text = message;
             }
             catch (Exception ex)

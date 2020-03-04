@@ -8,3 +8,4 @@ C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\bin\Debug\Proyecto_LFYA.exe
 C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\bin\Debug\Proyecto_LFYA.pdb
 C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.exe
 C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.pdb
+C:\Users\user\Desktop\Proyecto_LFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.AnalizarGramatica.resources

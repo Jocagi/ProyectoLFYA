@@ -12,30 +12,35 @@ namespace Proyecto_LFYA.Utilities
             this.states = table;
         }
 
-        public void isValidString(string text, ref string message)
+        public bool isValidString(string text, ref string message, ref int countCharacters)
         {
             //Evaluate character in table position
             //Go through all possible next positions and find a match
             //count number of times that was validated until error
             //if any of the possible follows is match return suggested char of the one with the longest chain
 
+            bool result = false;
             Stack<char> characters = new Stack<char>();
             for (int i = text.Length - 1; i >= 0; i--)
             {
                 characters.Push(text[i]);
             }
 
-            message = traverseTable(characters, 0);
+            message = traverseTable(characters, 0, ref result, ref countCharacters);
+
+            return result;
         }
 
-        private string traverseTable(Stack<char> expression, int position)
+        private string traverseTable(Stack<char> expression, int position, ref bool isCorrect, ref int characters)
         {
             string expectedValue = "";
             int logestPath = 0;
             bool isCorrectString = false;
 
             int count = pathCount(expression, 0, ref expectedValue, ref logestPath, ref isCorrectString);
-            
+
+            characters = count;
+
             if (!isCorrectString)
             {
                 if (expectedValue != "")
@@ -43,9 +48,11 @@ namespace Proyecto_LFYA.Utilities
                     expectedValue = "Se esperaba " + expectedValue; 
                 }
 
+                isCorrect = false;
                 return $"Error de formato: {expectedValue}";
             }
 
+            isCorrect = true;
             return "Formato Correcto";
         }
 
@@ -96,6 +103,12 @@ namespace Proyecto_LFYA.Utilities
                 string tmpExpectedValue = "";
                 int tmpLongestPath = 0;
                 bool foundNextValue = false;
+                bool jumpFound = nextCharacter == '\n'; //Ya no se que hacer :(
+
+                if (jumpFound)
+                {
+                    nextCharacter = ' ';
+                }
 
                 //Traverse follow values
                 foreach (var item in states.nodes[position].follows)
@@ -110,15 +123,17 @@ namespace Proyecto_LFYA.Utilities
                         thisNodeFollowValues = $"{states.nodes[item].character}";
                     }
                     
-                    if (states.nodes[item].character == nextCharacter || states.nodes[item].isAcceptanceStatus)
+                    if (states.nodes[item].character == nextCharacter || states.nodes[item].isAcceptanceStatus ||
+                        (states.nodes[item].character == ExpressionCharacters.LetrasMayusculaRegex && char.IsUpper(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.LetrasMinusculaRegex && char.IsLower(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.NumerosRegex && char.IsDigit(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.SimbolosRegex && (char.IsSymbol(nextCharacter) || char.IsPunctuation(nextCharacter))))
                     {
                         //Mark flag for later use
                         foundNextValue = true;
-                        Stack<char> NextExpression = new Stack<char>();
-                        NextExpression = expression;
-
+                        
                         //Check if this is not the correct path
-                        int tmp = pathCount(NextExpression, item, ref tmpExpectedValue,
+                        int tmp = pathCount(expression, item, ref tmpExpectedValue,
                             ref tmpLongestPath, ref isCorrect);
 
                         //Not efficient nor logical, but it works
@@ -132,11 +147,21 @@ namespace Proyecto_LFYA.Utilities
                             expectedValue = tmpExpectedValue;
                             longestPath = tmp;
                         }
+                        
+                    }
+
+                    if (isCorrect || (jumpFound&&foundNextValue))
+                    {
+                        break;
                     }
                 }
 
                 //Analyze results for recursion
-                if (foundNextValue)
+                if (isCorrect)
+                {
+                    return 0;
+                }
+                else if (foundNextValue)
                 {
                     expression.Push(nextCharacter); //Fixes bug with or operation
                     return longestPath + 1;
@@ -147,8 +172,6 @@ namespace Proyecto_LFYA.Utilities
                     expectedValue = thisNodeFollowValues;
                     return 1;
                 }
-
-                
             }
         }
     }

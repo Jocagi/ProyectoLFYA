@@ -1,0 +1,110 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+namespace Proyecto_LFYA.Utilities
+{
+    class AnalizarGramatica
+    {
+        private static string expresionRegular = "(( *SETS *)([A-Z]+ *= *(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\\([0-9]\\)(..CHR\\([0-9]\\))?)|(CHR\\([0-9]+\\))((..CHR\\([0-9]+\\))?))(( *\\+ *)(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\\([0-9]\\)(..CHR\\([0-9]\\))?)|(CHR\\([0-9]+\\))((..CHR\\([0-9]+\\))?)))* *)+)?(( *TOKENS *)(TOKEN *[0-9]+ *= *(([A-Z]+)|(\\( *[A-Z] *)\\)|('([Simbolo]|[A-Z]|[a-z]|[0-9])')| |\\?|\\||\\*|\\+|\\(|\\)|({ *[A-Z]+\\(\\) *}))+ *)+)( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *}([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
+        private static string expresionSET = " *[A-Z]+ *= *((('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\)))(..(('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\))))?)+ *#";
+        private static string expresionTOKEN = "( *TOKEN *[0-9]+ *= *(([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\||\\*|\\+|({ *[A-Z]+\\(\\) *}))+ *)+#";
+        private static string expresionACTIONSYERROR = "( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *}([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
+
+        public static string analizarAchivoGramatica(string text)
+        {
+            text = text.Replace('\r', ' ');
+            text = text.Replace('\t', ' ');
+
+            RegexOptions options = RegexOptions.None;
+            Regex regex = new Regex("[ ]{2,}", options);
+            text = regex.Replace(text, " ");
+            
+            text = text.TrimStart();
+            text = text.TrimEnd();
+
+            //RegEx reg = new RegEx(expresionRegular);
+            RegEx regSET = new RegEx(expresionSET);
+            RegEx regTOKEN = new RegEx(expresionTOKEN);
+            RegEx regOTRO = new RegEx(expresionACTIONSYERROR);
+
+            string mensaje;
+            string actions = "";
+
+            bool inicio = true;
+            bool setActive = false;
+            bool tokenActive = false;
+            bool actionActive = false;
+            string[] lineas = text.Split('\n');
+            int count = 1;
+
+            foreach (var item in lineas)
+            {
+                count++;
+                if (!String.IsNullOrWhiteSpace(item) && !String.IsNullOrEmpty(item))
+                {
+                    if (inicio)
+                    {
+                        inicio = false;
+                        if (item.Contains("SETS"))
+                        {
+                            setActive = true;
+                        }
+                        else if (item.Contains("TOKENS"))
+                        {
+                            tokenActive = true;
+                        }
+                        else
+                        {
+                            return "Error: Se esperaba SETS|TOKENS";
+                        }
+                    }
+                    else if (setActive)
+                    {
+                        if (item.Contains("TOKENS"))
+                        {
+                            setActive = false;
+                            tokenActive = true;
+                        }
+                        else
+                        {
+                            mensaje = regSET.ValidateString(item);
+                            if (mensaje.Contains("Error"))
+                            {
+                                return $"Error en linea:{count}\n{mensaje}";
+                            }
+                        }
+                    }
+                    else if (tokenActive)
+                    {
+                        if (item.Contains("ACTIONS"))
+                        {
+                            actions = "ACTIONS";
+                            tokenActive = false;
+                            actionActive = true;
+                        }
+                        else
+                        {
+                            mensaje = regTOKEN.ValidateString(item);
+                            if (mensaje.Contains("Error"))
+                            {
+                                return $"Error en linea:{count}\n{mensaje}";
+                            }
+                        }
+                    }
+                    else if (actionActive)
+                    {
+                        actions += " " + item;
+                    }
+                }
+            }
+
+            mensaje = regOTRO.ValidateString(actions);
+
+            return mensaje;
+        } 
+    }
+}
