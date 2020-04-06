@@ -5,9 +5,9 @@ namespace Proyecto_LFYA.Utilities
 {
     class DFA
     {
-        TransitionTable states;
+        FollowTable states;
 
-        public DFA(TransitionTable table)
+        public DFA(FollowTable table)
         {
             this.states = table;
         }
@@ -136,7 +136,6 @@ namespace Proyecto_LFYA.Utilities
                         int tmp = pathCount(expression, item, ref tmpExpectedValue,
                             ref tmpLongestPath, ref isCorrect);
 
-                        //Not efficient nor logical, but it works
                         if (tmp == 5) //If final status is reached but there were still char in stack
                         {
                             tmpExpectedValue += states.nodes[position].character.ToString();
@@ -163,12 +162,12 @@ namespace Proyecto_LFYA.Utilities
                 }
                 else if (foundNextValue)
                 {
-                    expression.Push(nextCharacter); //Fixes bug with or operation
+                    expression.Push(nextCharacter); //Return item for next iteration
                     return longestPath + 1;
                 }
                 else
                 {
-                    expression.Push(nextCharacter); //Fixes bug with or operation
+                    expression.Push(nextCharacter); //Return item for next iteration
                     expectedValue = thisNodeFollowValues;
                     return 1;
                 }

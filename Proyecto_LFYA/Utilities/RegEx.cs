@@ -13,7 +13,7 @@ namespace Proyecto_LFYA.Utilities
             //Create an expression tree
             //Create and set Table
             expression = replaceAbreviations(expression);
-            automaton = new DFA(new TransitionTable(new ExpressionTree(expression)));
+            automaton = new DFA(new FollowTable(new ExpressionTree(expression)));
         }
 
         private string replaceAbreviations(string expression)

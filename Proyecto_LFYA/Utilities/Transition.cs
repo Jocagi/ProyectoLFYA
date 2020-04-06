@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class TransitionTable
+    class Transition
     {
     }
 }

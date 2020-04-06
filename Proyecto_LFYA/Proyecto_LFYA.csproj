@@ -65,9 +65,11 @@
     <Compile Include="Utilities\ExpressionCharacters.cs" />
     <Compile Include="Utilities\ExpressionTree.cs" />
     <Compile Include="Utilities\Follow.cs" />
-    <Compile Include="Utilities\TransitionTable.cs" />
+    <Compile Include="Utilities\FollowTable.cs" />
     <Compile Include="Utilities\Node.cs" />
     <Compile Include="Utilities\RegEx.cs" />
+    <Compile Include="Utilities\Transition.cs" />
+    <Compile Include="Utilities\TransitionTable.cs" />
     <EmbeddedResource Include="AnalizarGramatica.resx">
       <DependentUpon>AnalizarGramatica.cs</DependentUpon>
     </EmbeddedResource>
