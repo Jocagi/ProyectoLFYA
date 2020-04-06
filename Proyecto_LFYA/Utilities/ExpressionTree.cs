@@ -338,6 +338,7 @@ namespace Proyecto_LFYA.Utilities
         private void setFirstPos()
         {
             setFirstPos(ref root);
+            root.firstPos.Sort();
         }
         private void setFirstPos(ref Node i)
         {

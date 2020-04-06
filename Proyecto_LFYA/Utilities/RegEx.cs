@@ -32,30 +32,10 @@ namespace Proyecto_LFYA.Utilities
             //Note: Only use error message if result is false
 
             string message = "";
-            string originalText = text;
             int characters = 0;
-            int lines = 1;
-
-
-            bool isvalid = automaton.isValidString(text, ref message, ref characters);
-
-            //if (!isvalid)
-            //{
-            //    int i = 0;
-            //    while (characters > 0)
-            //    {
-            //        if (originalText[i] == '\n')
-            //        {
-            //            lines++;
-            //        }
-
-            //        i++;
-            //        characters--;
-            //    }
-
-            //    message = $"Error en linea:{lines}\n{message}";
-            //}
-
+            
+            bool isValid = automaton.isValidString(text, ref message, ref characters);
+            
             message = message.Replace(LetrasMayusculaRegex.ToString(), AbrevLetrasMayusculaRegex);
             message = message.Replace(LetrasMinusculaRegex.ToString(), AbrevLetrasMinusculaRegex);
             message = message.Replace(NumerosRegex.ToString(), AbrevNumerosRegex);

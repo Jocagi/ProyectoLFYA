@@ -26,12 +26,12 @@ namespace Proyecto_LFYA.Utilities
                 characters.Push(text[i]);
             }
 
-            message = traverseTable(characters, 0, ref result, ref countCharacters);
+            message = traverseTable(characters, ref result, ref countCharacters);
 
             return result;
         }
-
-        private string traverseTable(Stack<char> expression, int position, ref bool isCorrect, ref int characters)
+        
+        private string traverseTable(Stack<char> expression, ref bool isCorrect, ref int characters)
         {
             string expectedValue = "";
             int logestPath = 0;
@@ -84,7 +84,7 @@ namespace Proyecto_LFYA.Utilities
                     }
                 }
 
-                //Fixes bug that shows # as an expected value
+                //Do not show # as an expected value
                 expectedValue = states.nodes[position].isAcceptanceStatus ? 
                                 "menos caracteres" : thisNodeFollowValues;
                 

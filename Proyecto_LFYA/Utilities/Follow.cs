@@ -8,14 +8,14 @@ namespace Proyecto_LFYA.Utilities
 {
     class Follow
     {
-        public char character { get; set; }
+        public string character { get; set; }
         public bool isAcceptanceStatus { get; set; }
         public List<int> follows { get; set; }
 
-        public Follow(char character)
+        public Follow(string character)
         {
             this.character = character;
-            isAcceptanceStatus = character == ExpressionCharacters.EndCharacter;
+            isAcceptanceStatus = character == ExpressionCharacters.EndCharacter.ToString();
             follows = new List<int>();
         }
     }
