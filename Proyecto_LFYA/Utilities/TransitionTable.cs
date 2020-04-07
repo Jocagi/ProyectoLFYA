@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Proyecto_LFYA.Utilities
         public List<string> symbolsList = new List<string>();
 
         /// <summary>
-        /// Conjunto de estados y transiciones.
+        /// Conjunto de estados y transiciones. Estas son las filas de la tabla.
         /// Key = indice del estado
         /// Value = Listado de transiciones(Incluye el simbolo y el listado de follows)
         /// </summary>
@@ -45,6 +46,7 @@ namespace Proyecto_LFYA.Utilities
                 }
             }
 
+            symbolsList.Remove(ExpressionCharacters.Epsilon.ToString());
             symbolsList.Sort();
         }
         
@@ -68,7 +70,7 @@ namespace Proyecto_LFYA.Utilities
                 transitions[position].Add(newTransition);
 
                 //Add new state
-                if (!states.Contains(newTransition.nodes))
+                if (!StateContainsNodes(newTransition.nodes) && newTransition.nodes.Count > 0)
                 {
                     states.Add(newTransition.nodes);
                     newStates.Add(states.Count - 1); //Pointer of the new element added
@@ -100,12 +102,30 @@ namespace Proyecto_LFYA.Utilities
             {
                 if (_followTable.nodes[item].character == symbol)
                 {
-                    follows = (List<int>) follows.Union(_followTable.nodes[item].follows);
+                    follows = follows.Count > 0 ? 
+                        follows.Union(_followTable.nodes[item].follows).ToList() : 
+                                                                _followTable.nodes[item].follows;
                 }
             }
             follows.Sort();
 
             return new Transition(symbol, follows);
+        }
+
+        /// <summary>
+        /// Check if List of states already contains the new states
+        /// </summary>
+        private bool StateContainsNodes(List<int> nodes)
+        {
+            foreach (var state in states)
+            {
+                if (state.All(nodes.Contains) && state.Count == nodes.Count)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Proyecto_LFYA.Utilities
         public DFA(FollowTable table)
         {
             this.states = table;
+            TransitionTable transitionTable = new TransitionTable(table);
         }
 
         public bool isValidString(string text, ref string message, ref int countCharacters)
@@ -123,11 +124,11 @@ namespace Proyecto_LFYA.Utilities
                         thisNodeFollowValues = $"{states.nodes[item].character}";
                     }
                     
-                    if (states.nodes[item].character == nextCharacter || states.nodes[item].isAcceptanceStatus ||
-                        (states.nodes[item].character == ExpressionCharacters.LetrasMayusculaRegex && char.IsUpper(nextCharacter))
-                        || (states.nodes[item].character == ExpressionCharacters.LetrasMinusculaRegex && char.IsLower(nextCharacter))
-                        || (states.nodes[item].character == ExpressionCharacters.NumerosRegex && char.IsDigit(nextCharacter))
-                        || (states.nodes[item].character == ExpressionCharacters.SimbolosRegex && (char.IsSymbol(nextCharacter) || char.IsPunctuation(nextCharacter))))
+                    if (states.nodes[item].character ==  nextCharacter.ToString() || states.nodes[item].isAcceptanceStatus ||
+                        (states.nodes[item].character == ExpressionCharacters.LetrasMayusculaRegex.ToString() && char.IsUpper(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.LetrasMinusculaRegex.ToString() && char.IsLower(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.NumerosRegex.ToString() && char.IsDigit(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.SimbolosRegex.ToString() && (char.IsSymbol(nextCharacter) || char.IsPunctuation(nextCharacter))))
                     {
                         //Mark flag for later use
                         foundNextValue = true;
