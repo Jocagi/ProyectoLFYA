@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,9 @@ namespace Proyecto_LFYA
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //ExpressionTree tree = new ExpressionTree(textExpression.Text);
+            ExpressionTree tree = new ExpressionTree(textExpression.Text);
+            PaintTree(tree);
+
             //labelResult.Text = tree.root.Inorder();
             try
             {
@@ -37,6 +40,46 @@ namespace Proyecto_LFYA
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        public static ImageCodecInfo GetEncoderInfo(string mimeType)
+        {
+            // Get image codecs for all image formats
+            var codecs = ImageCodecInfo.GetImageEncoders();
+            // Find the correct image codec
+            return codecs.FirstOrDefault(t => t.MimeType == mimeType);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            const double quality = 1;
+            var d = new SaveFileDialog { Filter = @"png files|*.png" };
+            try
+            {
+                if (d.ShowDialog() != DialogResult.OK)
+                    return;
+                var bmp = TreePicture.Image;
+                var qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality,
+                    (long)(quality * 75));
+                // Jpeg image codec
+                var jpegCodec = GetEncoderInfo("image/png");
+                if (jpegCodec == null)
+                    return;
+                var encoderParams = new EncoderParameters(1) {Param = {[0] = qualityParam}};
+                bmp.Save(d.FileName, jpegCodec, encoderParams);
+
+                MessageBox.Show(@"Archivo guardado exitosamente.");
+            }
+            catch (Exception exp)
+            {
+                MessageBox.Show(exp.Message);
+            }
+        }
+
+        void PaintTree(ExpressionTree _tree)
+        {
+            if (_tree == null) return;
+            TreePicture.Image = _tree.Draw();
         }
     }
 }

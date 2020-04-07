@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +19,8 @@ namespace Proyecto_LFYA.Utilities
 
         public ExpressionTree(string expression)
         {
+            checkForEndCharacter(ref expression);
+
             //Shunting yard algorithm to generate tree
             Queue<char> Tokens = getTokensFromExpression(expression);
             shuntingYard(Tokens);
@@ -26,7 +30,15 @@ namespace Proyecto_LFYA.Utilities
             setFirstPos();
             setLastPos();
         }
-        
+
+        private void checkForEndCharacter(ref string expression)
+        {
+            if (expression[expression.Length-1] != EndCharacter)
+            {
+                expression = $"({expression}){EndCharacter}";
+            }
+        }
+
         private Queue<char> getTokensFromExpression(string expression)
         {
             //    Adds each character from the string to a Queque including 
@@ -251,6 +263,7 @@ namespace Proyecto_LFYA.Utilities
             }
         }
 
+
         //Follow Functions
 
         private void setNumberInNodes()
@@ -465,5 +478,16 @@ namespace Proyecto_LFYA.Utilities
                 }
             }
         }
+
+
+        //Draw tree
+
+        public Image Draw()
+        {
+            GC.Collect();// collects the unreffered locations on the memory
+            int temp;
+            return root == null ? null : root.Draw(out temp);
+        }
+
     }
 }
