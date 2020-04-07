@@ -20,3 +20,4 @@ C:\Users\user\Desktop\ProyectoLFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.csproj.
 C:\Users\user\Desktop\ProyectoLFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.csproj.CoreCompileInputs.cache
 C:\Users\user\Desktop\ProyectoLFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.exe
 C:\Users\user\Desktop\ProyectoLFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.pdb
+C:\Users\user\Desktop\ProyectoLFYA\Proyecto_LFYA\obj\Debug\Proyecto_LFYA.TreeDetails.resources

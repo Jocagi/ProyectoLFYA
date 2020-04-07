@@ -7,10 +7,17 @@ namespace Proyecto_LFYA.Utilities
     {
         FollowTable states;
 
-        public DFA(FollowTable table)
+        public DFA(ExpressionTree tree)
         {
-            this.states = table;
-            TransitionTable transitionTable = new TransitionTable(table);
+            this.states = new FollowTable(tree);
+            TransitionTable transitionTable = new TransitionTable(states);
+        }
+
+        //todo DFA with sets
+        public DFA(ExpressionTree tree, Dictionary<string, int[]> sets)
+        {
+            this.states = new FollowTable(tree);
+            TransitionTable transitionTable = new TransitionTable(states);
         }
 
         public bool isValidString(string text, ref string message, ref int countCharacters)

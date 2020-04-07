@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class ExpressionCharacters
+    public class ExpressionCharacters
     {
         //Characters of expression
         public const char Concatenation = '●';

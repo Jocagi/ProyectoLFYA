@@ -115,6 +115,18 @@ namespace Proyecto_LFYA.Utilities
             mensaje = regOTRO.ValidateString(actions);
 
             return mensaje;
-        } 
+        }
+
+        //public static ExpressionTree obtenerArbolDeGramatica(string text)
+        //{
+        //    text = text.Replace('\r', ' ');
+        //    text = text.Replace('\t', ' ');
+
+        //    text = text.TrimStart();
+        //    text = text.TrimEnd();
+
+        //    string[] lineas = text.Split('\n');
+
+        //}
     }
 }

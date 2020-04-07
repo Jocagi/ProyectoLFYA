@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class Node
+    public class Node
     {
         public int number { set; get; }
         public List<int> firstPos { set; get; }

@@ -60,6 +60,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TreeDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TreeDetails.Designer.cs">
+      <DependentUpon>TreeDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\AnalizarGramatica.cs" />
     <Compile Include="Utilities\DFA.cs" />
     <Compile Include="Utilities\ExpressionCharacters.cs" />
@@ -84,7 +90,11 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="TreeDetails.resx">
+      <DependentUpon>TreeDetails.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -97,6 +107,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Gaticornio.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\background_blue.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

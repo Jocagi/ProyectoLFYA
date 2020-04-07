@@ -1,5 +1,4 @@
-﻿using Proyecto_LFYA.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,37 +8,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Proyecto_LFYA.Utilities;
 
 namespace Proyecto_LFYA
 {
-    public partial class Form1 : Form
+    public partial class TreeDetails : Form
     {
-        public Form1()
+        public TreeDetails()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        public TreeDetails(ExpressionTree tree)
         {
-
+            InitializeComponent();
+            PaintTree(tree);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        void PaintTree(ExpressionTree _tree)
         {
-            ExpressionTree tree = new ExpressionTree(textExpression.Text);
-            PaintTree(tree);
-
-            //labelResult.Text = tree.root.Inorder();
-            try
-            {
-                RegEx reg = new RegEx(textExpression.Text);
-                string message = reg.ValidateString(text.Text);
-                resultadoExpresion.Text = message;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            if (_tree == null) return;
+            treePictureBox.Image = _tree.Draw();
         }
 
         public static ImageCodecInfo GetEncoderInfo(string mimeType)
@@ -50,7 +39,7 @@ namespace Proyecto_LFYA
             return codecs.FirstOrDefault(t => t.MimeType == mimeType);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void download_Click(object sender, EventArgs e)
         {
             const double quality = 1;
             var d = new SaveFileDialog { Filter = @"png files|*.png" };
@@ -58,14 +47,14 @@ namespace Proyecto_LFYA
             {
                 if (d.ShowDialog() != DialogResult.OK)
                     return;
-                var bmp = TreePicture.Image;
+                var bmp = treePictureBox.Image;
                 var qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality,
                     (long)(quality * 75));
-                
+
                 var pngCodec = GetEncoderInfo("image/png");
                 if (pngCodec == null)
                     return;
-                var encoderParams = new EncoderParameters(1) {Param = {[0] = qualityParam}};
+                var encoderParams = new EncoderParameters(1) { Param = { [0] = qualityParam } };
                 bmp.Save(d.FileName, pngCodec, encoderParams);
 
                 MessageBox.Show(@"Archivo guardado exitosamente.");
@@ -74,12 +63,6 @@ namespace Proyecto_LFYA
             {
                 MessageBox.Show(exp.Message);
             }
-        }
-
-        void PaintTree(ExpressionTree _tree)
-        {
-            if (_tree == null) return;
-            TreePicture.Image = _tree.Draw();
         }
     }
 }

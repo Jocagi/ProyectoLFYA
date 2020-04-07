@@ -8,11 +8,19 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class ExpressionTree:ExpressionCharacters
+    public class ExpressionTree:ExpressionCharacters
     {
+        /// <summary>
+        /// Initial node of the tree
+        /// </summary>
         public Node root;
         
-        private ExpressionTree()
+        /// <summary>
+        /// Dictionary with definitions of sets
+        /// </summary>
+        public Dictionary<string, int[]> sets = new Dictionary<string, int[]>();
+
+        public ExpressionTree()
         {
             this.root = null;
         }
@@ -30,7 +38,7 @@ namespace Proyecto_LFYA.Utilities
             setFirstPos();
             setLastPos();
         }
-
+        
         private void checkForEndCharacter(ref string expression)
         {
             if (expression[expression.Length-1] != EndCharacter)

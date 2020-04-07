@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Proyecto_LFYA.Utilities
@@ -6,14 +7,22 @@ namespace Proyecto_LFYA.Utilities
     class RegEx:ExpressionCharacters
     {
         //Regular Expression
-        DFA automaton;
+        readonly DFA automaton;
 
         public RegEx(string expression)
         {
             //Create an expression tree
             //Create and set Table
             expression = replaceAbreviations(expression);
-            automaton = new DFA(new FollowTable(new ExpressionTree(expression)));
+            automaton = new DFA(new ExpressionTree(expression));
+        }
+
+        public RegEx(string expression, Dictionary<string, int[]> sets)
+        {
+            //Create an expression tree considering special sets
+            //Create and set Table
+            expression = replaceAbreviations(expression);
+            automaton = new DFA(new ExpressionTree(expression), sets);
         }
 
         private string replaceAbreviations(string expression)
