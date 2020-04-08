@@ -84,7 +84,7 @@ namespace Proyecto_LFYA
 
         private void detailsButton_Click(object sender, EventArgs e)
         {
-
+            tree = Utilities.AnalizarGramatica.obtenerArbolDeGramatica(grammarTextBox.Text);
         }
     }
 }

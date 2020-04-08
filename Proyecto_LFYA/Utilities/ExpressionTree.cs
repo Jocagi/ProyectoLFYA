@@ -38,7 +38,13 @@ namespace Proyecto_LFYA.Utilities
             setFirstPos();
             setLastPos();
         }
-        
+
+        //todo implement overload
+        public ExpressionTree(string expression, Dictionary<string, int[]> sets)
+        {
+
+        }
+
         private void checkForEndCharacter(ref string expression)
         {
             if (expression[expression.Length-1] != EndCharacter)

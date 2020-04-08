@@ -79,7 +79,7 @@
             this.resultTextBox.Location = new System.Drawing.Point(133, 464);
             this.resultTextBox.Name = "resultTextBox";
             this.resultTextBox.ReadOnly = true;
-            this.resultTextBox.Size = new System.Drawing.Size(265, 26);
+            this.resultTextBox.Size = new System.Drawing.Size(384, 26);
             this.resultTextBox.TabIndex = 6;
             // 
             // grammarTextBox
@@ -87,13 +87,13 @@
             this.grammarTextBox.Location = new System.Drawing.Point(37, 98);
             this.grammarTextBox.Name = "grammarTextBox";
             this.grammarTextBox.ReadOnly = true;
-            this.grammarTextBox.Size = new System.Drawing.Size(361, 335);
+            this.grammarTextBox.Size = new System.Drawing.Size(480, 335);
             this.grammarTextBox.TabIndex = 7;
             this.grammarTextBox.Text = "";
             // 
             // detailsButton
             // 
-            this.detailsButton.Location = new System.Drawing.Point(417, 460);
+            this.detailsButton.Location = new System.Drawing.Point(417, 516);
             this.detailsButton.Name = "detailsButton";
             this.detailsButton.Size = new System.Drawing.Size(100, 34);
             this.detailsButton.TabIndex = 8;

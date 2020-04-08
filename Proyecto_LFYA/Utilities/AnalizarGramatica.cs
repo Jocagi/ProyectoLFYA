@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Proyecto_LFYA.Utilities
 {
@@ -117,16 +118,167 @@ namespace Proyecto_LFYA.Utilities
             return mensaje;
         }
 
-        //public static ExpressionTree obtenerArbolDeGramatica(string text)
-        //{
-        //    text = text.Replace('\r', ' ');
-        //    text = text.Replace('\t', ' ');
+        public static ExpressionTree obtenerArbolDeGramatica(string text)
+        {
+            Dictionary<string, int[]> sets = new Dictionary<string, int[]>();
+            string token = ""; //Each token will be concatenated
 
-        //    text = text.TrimStart();
-        //    text = text.TrimEnd();
+            text = text.Replace('\r', ' ');
+            text = text.Replace('\t', ' ');
 
-        //    string[] lineas = text.Split('\n');
+            text = text.TrimStart();
+            text = text.TrimEnd();
 
-        //}
+            //Position in the file
+            bool inicio = true;
+            bool setActive = false;
+            bool tokenActive = false;
+            bool actionActive = false;
+
+            //List with the number of the tokens
+            List<int> tokensList = new List<int>();
+            
+            string[] lineas = text.Split('\n');
+            
+            //Traverse the file
+            foreach (var item in lineas)
+            {
+                if (!String.IsNullOrWhiteSpace(item) && !String.IsNullOrEmpty(item))
+                {
+                    if (inicio)
+                    {
+                        inicio = false;
+                        if (item.Contains("SETS"))
+                        {
+                            setActive = true;
+                        }
+                        else if (item.Contains("TOKENS"))
+                        {
+                            tokenActive = true;
+                        }
+                        else
+                        {
+                            throw new Exception("Formato incorrecto.");
+                        }
+                    }
+                    else if (setActive)
+                    {
+                        if (item.Contains("TOKENS")) //End of section 'SETS'
+                        {
+                            setActive = false;
+                            tokenActive = true;
+                        }
+                        else //There are still sets in the file 
+                        {
+                            AddNewSET(ref sets, item);
+                        }
+                    }
+                    else if (tokenActive)
+                    {
+                        if (item.Contains("ACTIONS")) //End of section 'TOKENS'
+                        {
+                            tokenActive = false;
+                            actionActive = true;
+                        }
+                        else
+                        {
+                            AddNewTOKEN(ref tokensList, ref token, item);
+                        }
+                    }
+
+                    //todo add ACTIONS and ERROR reader. (Fase 3)
+                }
+            }
+
+            //Create tree
+            if (token != "")
+            {
+                return new ExpressionTree(token, sets);
+            }
+            else
+            {
+                throw new Exception("Se esperaba mas tokens");
+            }
+        }
+
+        //todo implement set reader
+        private static void AddNewSET(ref Dictionary<string, int[]> sets, string text)
+        {
+            List<int> asciiValues = new List<int>();
+            string setName = "";
+
+            string[] line = text.Split('=');
+
+            setName = line[0].Trim();//this is the set name
+            line[1] = line[1].Trim();//this are the values
+
+            string[] values = line[1].Split('+');
+
+            foreach (var item in values)
+            {
+                string[] tmpLimits = item.Split('.');
+
+                List<string> Limits = new List<string>();
+
+                //format
+                foreach (var i in tmpLimits)
+                {
+                    if (!String.IsNullOrEmpty(i))
+                    {
+                        Limits.Add(i.Trim());
+                    }   
+                }
+                
+                if (Limits.Count == 2)
+                {
+                    int lowerLimit = formatToken(Limits[0]);
+                    int upperLimit = formatToken(Limits[1]); ;
+                    
+                    //get all ascii values
+                    for (int i = lowerLimit; i <= upperLimit; i--)
+                    {
+                        //Add to values
+                        asciiValues.Add(i);
+
+                        //Increment i, to fit all ascii values (256)
+                        i = (i + 2) % 257;
+                    }
+                }
+                else if (Limits.Count == 1)
+                {
+                    int character = formatToken(Limits[0]);
+
+                    asciiValues.Add(character);
+                }
+            }
+
+            sets.Add(setName, asciiValues.ToArray());
+        }
+
+        private static int formatToken(string token)
+        {
+            int result;
+
+            if (token.Contains("CHR")) //Ex. CHR(90)
+            {
+                string value = token.Replace("CHR", "");
+                value = value.Replace("(", "");
+                value = value.Replace(")", "");
+                value = value.Replace(" ", "");
+
+                result = Convert.ToInt16(value);
+            }
+            else //Ex. 'A'
+            {
+                result = Encoding.ASCII.GetBytes(token)[1];
+            }
+
+            return result;
+        }
+
+        //todo implement token reader
+        private static void AddNewTOKEN(ref List<int> tokenNumbers, ref string tokens, string text )
+        {
+        }
     }
 }
