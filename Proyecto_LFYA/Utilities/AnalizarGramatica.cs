@@ -45,7 +45,7 @@ namespace Proyecto_LFYA.Utilities
             foreach (var item in lineas)
             {
                 count++;
-                if (!String.IsNullOrWhiteSpace(item) && !String.IsNullOrEmpty(item))
+                if (!string.IsNullOrWhiteSpace(item) && !string.IsNullOrEmpty(item))
                 {
                     if (inicio)
                     {
@@ -143,7 +143,7 @@ namespace Proyecto_LFYA.Utilities
             //Traverse the file
             foreach (var item in lineas)
             {
-                if (!String.IsNullOrWhiteSpace(item) && !String.IsNullOrEmpty(item))
+                if (!string.IsNullOrWhiteSpace(item) && !string.IsNullOrEmpty(item))
                 {
                     if (inicio)
                     {
@@ -201,7 +201,7 @@ namespace Proyecto_LFYA.Utilities
             }
         }
 
-        //todo implement set reader
+        //SET reader
         private static void AddNewSET(ref Dictionary<string, int[]> sets, string text)
         {
             List<int> asciiValues = new List<int>();
@@ -223,7 +223,7 @@ namespace Proyecto_LFYA.Utilities
                 //format
                 foreach (var i in tmpLimits)
                 {
-                    if (!String.IsNullOrEmpty(i))
+                    if (!string.IsNullOrEmpty(i))
                     {
                         Limits.Add(i.Trim());
                     }   
@@ -231,8 +231,8 @@ namespace Proyecto_LFYA.Utilities
                 
                 if (Limits.Count == 2)
                 {
-                    int lowerLimit = formatToken(Limits[0]);
-                    int upperLimit = formatToken(Limits[1]); ;
+                    int lowerLimit = formatSET(Limits[0]);
+                    int upperLimit = formatSET(Limits[1]); ;
                     
                     //get all ascii values
                     for (int i = lowerLimit; i <= upperLimit; i--)
@@ -246,7 +246,7 @@ namespace Proyecto_LFYA.Utilities
                 }
                 else if (Limits.Count == 1)
                 {
-                    int character = formatToken(Limits[0]);
+                    int character = formatSET(Limits[0]);
 
                     asciiValues.Add(character);
                 }
@@ -255,7 +255,7 @@ namespace Proyecto_LFYA.Utilities
             sets.Add(setName, asciiValues.ToArray());
         }
 
-        private static int formatToken(string token)
+        private static int formatSET(string token)
         {
             int result;
 
@@ -276,9 +276,111 @@ namespace Proyecto_LFYA.Utilities
             return result;
         }
 
-        //todo implement token reader
+        //TOKEN reader
         private static void AddNewTOKEN(ref List<int> tokenNumbers, ref string tokens, string text )
         {
+            text = text.Replace("TOKEN", "");
+            text = text.Trim();
+            int tokenNumber = 0;
+
+            string[] line = SplitToken(text);
+
+            //Validate token number
+            if (int.TryParse(line[0].Trim(), out tokenNumber))
+            {
+                if (!tokenNumbers.Contains(tokenNumber))
+                {
+                    tokenNumbers.Add(tokenNumber);
+                }
+                else
+                {
+                    throw new Exception($"El TOKEN {tokenNumber} aparece mas de una vez.");
+                }
+            }
+            else
+            {
+              throw new Exception($"El nombre del TOKEN {line[0]} no es valido.");
+            }
+            
+            string newToken = line[1].Trim();//this are the values
+
+            if (string.IsNullOrEmpty(tokens) | string.IsNullOrWhiteSpace(tokens))
+            {
+                tokens = $"({newToken})";
+            }
+            else
+            {
+                tokens += $"|({newToken})";
+            }
+        }
+
+        private static string[] SplitToken(string expression)
+        {
+            string[] token = {"", ""};
+
+            for (int i = 0; i < expression.Length; i++)
+            {
+                if (expression[i] != '=')
+                {
+                    token[0] += expression[i];
+                }
+                else
+                {
+                    //todo Implement ask what to do with Reservadas()
+
+                    string tmp = "";
+
+                    for (int j = i + 1; j < expression.Length; j++)
+                    {
+                        tmp += expression[j];
+                    }
+
+                    token[1] = removeActionsFromExpression(tmp);
+                    token[1] = token[1].Trim();
+                    break;
+                }
+            }
+
+            return token;
+        }
+
+        private static string removeActionsFromExpression(string text)
+        {
+            //Remove everything contained within {}
+            string result = "";
+
+            if (text.Contains('{') && text.Contains('}'))
+            {
+                for (int i = 0; i < text.Length; i++)
+                {
+                    if (text[i] == '\'')
+                    {
+                        result += text[i + 1];
+                        i += 2;
+                    }
+                    else if (text[i] == '{')
+                    {
+                        int counter = 0;
+                        char? actualChar = text[i];
+
+                        while (actualChar != '}')
+                        {
+                            counter++;
+                            actualChar = text[i + counter];
+                        }
+
+                        i += counter;
+                    }
+                    else
+                    {
+                        result += text[i];
+                    }
+                }
+
+                return result;
+            }
+
+            return text;
         }
     }
 }

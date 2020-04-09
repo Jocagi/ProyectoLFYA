@@ -26,8 +26,13 @@ namespace Proyecto_LFYA
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ExpressionTree tree = new ExpressionTree(textExpression.Text);
-            PaintTree(tree);
+            //ExpressionTree tree = new ExpressionTree(textExpression.Text);
+            //PaintTree(tree);
+
+            Dictionary<string, int[]> sets = new Dictionary<string, int[]>();
+            sets.Add("LETRA", new []{ 97, 98, 99, 100});
+            ExpressionTree tree2 = new ExpressionTree(textExpression.Text, sets);
+            PaintTree(tree2);
 
             //labelResult.Text = tree.root.Inorder();
             try

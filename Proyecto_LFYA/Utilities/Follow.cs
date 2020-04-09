@@ -15,7 +15,7 @@ namespace Proyecto_LFYA.Utilities
         public Follow(string character)
         {
             this.character = character;
-            isAcceptanceStatus = character == ExpressionCharacters.EndCharacter.ToString();
+            isAcceptanceStatus = character == ExpressionCharacters.EndCharacter;
             follows = new List<int>();
         }
     }

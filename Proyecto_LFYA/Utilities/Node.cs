@@ -15,13 +15,13 @@ namespace Proyecto_LFYA.Utilities
         public List<int> lastPos { set; get; }
         public bool nullable { set; get; }
 
-        public char element { set; get; }
+        public string element { set; get; }
         public Node left { set; get; }
         public Node right { set; get; }
         
         //Functions
         public Node() { }
-        public Node(char element)
+        public Node(string element)
         {
             this.element = element;
 
@@ -40,13 +40,13 @@ namespace Proyecto_LFYA.Utilities
                 new Point(1, 1), Color.CornflowerBlue, Color.Black), rcl);
             g.DrawEllipse(new Pen(Color.Black, 2.1f), rcl); 
         }
-        public Node(char element, Node left, Node right)
+        public Node(string element, Node left, Node right)
         {
             this.element = element;
             this.left = left;
             this.right = right;
         }
-        public Node(char element, char left, char right)
+        public Node(string element, string left, string right)
         {
             this.element = element;
             this.left = new Node(left);
@@ -78,12 +78,13 @@ namespace Proyecto_LFYA.Utilities
 
         public bool isLeaf()
         {
-           return this.left == null && this.right == null;
+           return left == null && right == null;
         }
 
         //Draw tree
 
         private bool _isChanged = true;
+
         /// <summary>
         /// true indicates that the current node or it's childs' has been updated or changed, and this value will cause the drawer redraw the current node
         /// </summary>
@@ -119,7 +120,7 @@ namespace Proyecto_LFYA.Utilities
 
         private static readonly Font font = new Font(
             fontFamily,
-            emSize: 15f * Coef,
+            emSize: 8f * Coef,
             style: FontStyle.Bold);
 
 
@@ -173,8 +174,11 @@ namespace Proyecto_LFYA.Utilities
             g.FillRectangle(Brushes.Transparent, new Rectangle(new Point(0, 0), resSize));
             g.DrawImage(_nodeBg, lSize.Width - _nodeBg.Width / 2 + _freeSpace.Width / 2, 0);
 
-            var str = element.ToString();
-            g.DrawString(str, font, Brushes.Black, lSize.Width - _nodeBg.Width / 2 + _freeSpace.Width / 2 + (2 + (str.Length == 1 ? 10 : str.Length == 2 ? 5 : 0)) * Coef, _nodeBg.Height / 2f - 12 * Coef);
+            var str = element;
+            g.DrawString(str, font, Brushes.Black,
+                lSize.Width - _nodeBg.Width / 2 + _freeSpace.Width / 2 + 
+                (2 + (str.Length == 1 ? 14 : str.Length >= 3 ? -2 : 5))* Coef,
+                    _nodeBg.Height / 2f - 6 * Coef);
 
 
             center = lSize.Width + _freeSpace.Width / 2;

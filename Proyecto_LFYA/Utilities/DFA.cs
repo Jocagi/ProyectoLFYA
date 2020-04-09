@@ -9,14 +9,14 @@ namespace Proyecto_LFYA.Utilities
 
         public DFA(ExpressionTree tree)
         {
-            this.states = new FollowTable(tree);
+            states = new FollowTable(tree);
             TransitionTable transitionTable = new TransitionTable(states);
         }
 
         //todo DFA with sets
         public DFA(ExpressionTree tree, Dictionary<string, int[]> sets)
         {
-            this.states = new FollowTable(tree);
+            states = new FollowTable(tree);
             TransitionTable transitionTable = new TransitionTable(states);
         }
 
@@ -132,10 +132,10 @@ namespace Proyecto_LFYA.Utilities
                     }
                     
                     if (states.nodes[item].character ==  nextCharacter.ToString() || states.nodes[item].isAcceptanceStatus ||
-                        (states.nodes[item].character == ExpressionCharacters.LetrasMayusculaRegex.ToString() && char.IsUpper(nextCharacter))
-                        || (states.nodes[item].character == ExpressionCharacters.LetrasMinusculaRegex.ToString() && char.IsLower(nextCharacter))
-                        || (states.nodes[item].character == ExpressionCharacters.NumerosRegex.ToString() && char.IsDigit(nextCharacter))
-                        || (states.nodes[item].character == ExpressionCharacters.SimbolosRegex.ToString() && (char.IsSymbol(nextCharacter) || char.IsPunctuation(nextCharacter))))
+                        (states.nodes[item].character == ExpressionCharacters.LetrasMayusculaRegex && char.IsUpper(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.LetrasMinusculaRegex && char.IsLower(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.NumerosRegex && char.IsDigit(nextCharacter))
+                        || (states.nodes[item].character == ExpressionCharacters.SimbolosRegex && (char.IsSymbol(nextCharacter) || char.IsPunctuation(nextCharacter))))
                     {
                         //Mark flag for later use
                         foundNextValue = true;
@@ -146,7 +146,7 @@ namespace Proyecto_LFYA.Utilities
 
                         if (tmp == 5) //If final status is reached but there were still char in stack
                         {
-                            tmpExpectedValue += states.nodes[position].character.ToString();
+                            tmpExpectedValue += states.nodes[position].character;
                         }
 
                         if (tmp >= longestPath)

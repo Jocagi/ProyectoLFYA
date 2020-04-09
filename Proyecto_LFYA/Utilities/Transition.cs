@@ -27,7 +27,7 @@ namespace Proyecto_LFYA.Utilities
         {
             symbol = simbolo;
             nodes = nodos;
-            isAcceptanceStatus = nodos.Contains(ExpressionCharacters.EndCharacter); 
+            isAcceptanceStatus = nodos.Contains(ExpressionCharacters.EndCharacter.ToCharArray()[0]); 
         }
     }
 }

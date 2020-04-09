@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
@@ -22,7 +19,7 @@ namespace Proyecto_LFYA.Utilities
 
         public ExpressionTree()
         {
-            this.root = null;
+            root = null;
         }
 
         public ExpressionTree(string expression)
@@ -30,7 +27,19 @@ namespace Proyecto_LFYA.Utilities
             checkForEndCharacter(ref expression);
 
             //Shunting yard algorithm to generate tree
-            Queue<char> Tokens = getTokensFromExpression(expression);
+            Queue<string> Tokens = getTokensFromExpression(expression);
+            shuntingYard(Tokens);
+
+            setNumberInNodes();
+            setNullableNodes();
+            setFirstPos();
+            setLastPos();
+        }
+        
+        public ExpressionTree(string expression, Dictionary<string, int[]> sets)
+        {
+            checkForEndCharacter(ref expression);
+            Queue<string> Tokens = getTokensFromGrammarExpression(expression, sets);
             shuntingYard(Tokens);
 
             setNumberInNodes();
@@ -39,67 +48,198 @@ namespace Proyecto_LFYA.Utilities
             setLastPos();
         }
 
-        //todo implement overload
-        public ExpressionTree(string expression, Dictionary<string, int[]> sets)
-        {
-
-        }
-
         private void checkForEndCharacter(ref string expression)
         {
-            if (expression[expression.Length-1] != EndCharacter)
+            if (expression[expression.Length-1].ToString() != EndCharacter)
             {
                 expression = $"({expression}){EndCharacter}";
             }
         }
 
-        private Queue<char> getTokensFromExpression(string expression)
+        /// <summary>
+        /// Adds each character from the string to a Queque including 
+        /// concat (.) when the are two characters next to each other.
+        /// </summary>
+        /// <param name="expression">Regular Expression</param>
+        private Queue<string> getTokensFromExpression(string expression)
         {
-            //    Adds each character from the string to a Queque including 
-            //    concat (.) when the are two characters next to each other.
-            
-            Queue<char> tokens = new Queue<char>();
+            Queue<string> tokens = new Queue<string>();
             int lenght = expression.Length;
 
             for (int i = 0; i < lenght; i++)
             {
-                int itemsLeft = lenght - i;
-
-                if (expression[i] == EndCharacter)
+                if (expression[i].ToString() == EndCharacter)
                 {
-                    tokens.Enqueue(expression[i]);
+                    tokens.Enqueue(expression[i].ToString());
                     break;
                 }
-                else if (expression[i] == Escape)
+                if (expression[i].ToString() == Escape)
                 {
-                    tokens.Enqueue(expression[i]);
-                    tokens.Enqueue(expression[i + 1]);
+                    tokens.Enqueue(expression[i].ToString());
+                    tokens.Enqueue(expression[i + 1].ToString());
                     //Prevent a concatenation with an operation
-                    if (expression[i + 2] != Grouping_Close && !isAnOperationChar(expression[i + 2])) 
+                    if (expression[i + 2].ToString() != Grouping_Close && !isAnOperationChar(expression[i + 2].ToString())) 
                     {
                         tokens.Enqueue(Concatenation);
                     }
                     i++;
                 }
-                else if (isABinaryOperationChar(expression[i]) || expression[i] == Grouping_Open || 
-                            expression[i] == EndCharacter || isAnOperationChar(expression[i + 1]) ||
-                            expression[i + 1] == Grouping_Close)
+                else if (isABinaryOperationChar(expression[i].ToString()) || expression[i].ToString() == Grouping_Open || 
+                            expression[i].ToString() == EndCharacter || isAnOperationChar(expression[i + 1].ToString()) ||
+                            expression[i + 1].ToString() == Grouping_Close)
                 {
-                    tokens.Enqueue(expression[i]);
+                    tokens.Enqueue(expression[i].ToString());
                 }
                 else //it must be a valid char tha can be concatenated ( + * ? a..z etc
                 {
-                    tokens.Enqueue(expression[i]);
+                    tokens.Enqueue(expression[i].ToString());
                     tokens.Enqueue(Concatenation);
                 }
             }
 
             return tokens;
         }
-        
-        private bool isASingleOperationChar(char item)
+
+        /// <summary>
+        /// Adds each character and custom values defined in sets from the string to a Queque 
+        /// </summary>
+        private Queue<string> getTokensFromGrammarExpression(string expression, Dictionary<string, int[]> sets)
         {
-            char[] SpecialCharacters = { KleeneStar, KleenePlus, QuestionMark };
+            expression = removeExtraSpacesFromString(expression);
+
+            Queue<string> tokens = new Queue<string>();
+            int lenght = expression.Length;
+
+            for (int i = 0; i < lenght; i++)
+            {
+                string item = expression[i].ToString();
+
+                if (item == EndCharacter)
+                {
+                    tokens.Enqueue(expression[i].ToString());
+                    break;
+                }
+
+                if (item == Char_Separator) //if it begins with '
+                {
+                    string itemAhead = expression[i + 2].ToString();
+
+                    if (itemAhead == Char_Separator) //if it ends with '
+                    {
+                        if (isSpecialCharacter(expression[i + 1].ToString()))
+                        {
+                            tokens.Enqueue(Escape);
+                        }
+
+                        tokens.Enqueue(expression[i + 1].ToString());
+
+                        //Prevent a concatenation with an operation
+                        if (expression[i + 3].ToString() != Grouping_Close &&
+                            !isAnOperationChar(expression[i + 3].ToString()))
+                        {
+                            tokens.Enqueue(Concatenation);
+                        }
+                        i += 2;
+                    }
+                    else if (itemAhead != " ") //ignore blank spaces
+                    {
+                        throw new Exception("Formato invalido, se esperaba '");
+                    }
+                }
+                else if (isABinaryOperationChar(item) || item == Grouping_Open ||
+                         item == EndCharacter || isAnOperationChar(expression[i + 1].ToString()) ||
+                         expression[i + 1].ToString() == Grouping_Close)
+                {
+                    tokens.Enqueue(expression[i].ToString());
+                }
+                else //it must be a valid char that can be concatenated ) + * ? a..z etc
+                {
+                    if (item == Grouping_Close | item == KleenePlus|
+                             item == KleeneStar| item == QuestionMark)
+                    {
+                        tokens.Enqueue(item);
+
+                        //Prevent a concatenation with an operation
+                        if (expression[i + 1].ToString() != Grouping_Close && !isAnOperationChar(expression[i + 1].ToString()))
+                        {
+                            tokens.Enqueue(Concatenation);
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(item) && !string.IsNullOrWhiteSpace(item))
+                        //it is a special token (defined in set)
+                    {
+                        string value = "";
+                        char token = expression[i];
+                        int counter = 0;
+
+                        while (token != ' ' && token.ToString() != Char_Separator && token.ToString() != Grouping_Close &&
+                               lenght > i + counter  && !isAnOperationChar(expression[i + counter].ToString()))
+                        {
+                            value += token;
+                            counter++;
+                            token = expression[i + counter];
+                        }
+
+                        if (sets.ContainsKey(value))
+                        {
+                            tokens.Enqueue(value);
+
+                            //Prevent a concatenation with an operation
+                            if (expression[i + counter].ToString() != Grouping_Close && !isAnOperationChar(expression[i + counter].ToString()))
+                            {
+                                tokens.Enqueue(Concatenation);
+                            }
+
+                            i += counter - 1;
+                        }
+                        else
+                        {
+                            throw new Exception($"No existe una definicion del SET {value}");
+                        }
+                    }
+                }
+            }
+
+            return tokens;
+        }
+
+        private string removeExtraSpacesFromString(string input)
+        {
+            string result = "";
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                char item = input[i];
+
+                if (item != ' ')
+                {
+                    if (item == '\'')
+                    {
+                        result += $"'{input[i + 1]}'";
+                        i+=2;
+                    }
+                    else
+                    {
+                        result += item;
+                    }
+                }
+                else if (result[result.Length -1] != ' ' && !isAnOperationChar(input[i + 1].ToString())) //if last item added was not a blankspace
+                {
+                    result += item;
+                }
+            }
+
+            return result;
+        }
+
+        private bool isSpecialCharacter(string item)
+        {
+            return isAnOperationChar(item) | item == Grouping_Close | item == Grouping_Open | item == Escape;
+        }
+
+        private bool isASingleOperationChar(string item)
+        {
+            string[] SpecialCharacters = { KleeneStar, KleenePlus, QuestionMark };
 
             if (SpecialCharacters.Contains(item))
             {
@@ -109,9 +249,9 @@ namespace Proyecto_LFYA.Utilities
             return false;
         }
 
-        private bool isABinaryOperationChar(char item)
+        private bool isABinaryOperationChar(string item)
         {
-            char[] SpecialCharacters = { Alternation, Concatenation };
+            string[] SpecialCharacters = { Alternation, Concatenation };
 
             if (SpecialCharacters.Contains(item))
             {
@@ -121,7 +261,7 @@ namespace Proyecto_LFYA.Utilities
             return false;
         }
 
-        private bool isAnOperationChar(char item)
+        private bool isAnOperationChar(string item)
         {
             if (isABinaryOperationChar(item) || isASingleOperationChar(item))
             {
@@ -131,10 +271,10 @@ namespace Proyecto_LFYA.Utilities
             return false;
         }
 
-        private bool isATerminalCharacter(char item)
+        private bool isATerminalCharacter(string item)
         {
             //Characters that represent operations
-            char[] SpecialCharacters = { Escape, Grouping_Open, Grouping_Close };
+            string[] SpecialCharacters = { Escape, Grouping_Open, Grouping_Close };
 
             if (SpecialCharacters.Contains(item) || isAnOperationChar(item))
             {
@@ -144,16 +284,16 @@ namespace Proyecto_LFYA.Utilities
             return true;
         }
 
-        private void shuntingYard(Queue<char> regularExpression)
+        private void shuntingYard(Queue<string> regularExpression)
         {
-            Stack<char> T = new Stack<char>(); //Stack of tokens
+            Stack<string> T = new Stack<string>(); //Stack of tokens
             Stack<Node> S = new Stack<Node>(); //Stack of trees
             
             //Step 1
             while (regularExpression.Count > 0)
             {
                 //Step 2
-                char token = regularExpression.Dequeue();
+                string token = regularExpression.Dequeue();
 
                 //Step 3
                 if (token == Escape)
@@ -187,15 +327,13 @@ namespace Proyecto_LFYA.Utilities
                         {
                             throw new Exception("Faltan operandos");
                         }
-                        else
-                        {
-                            Node temp = new Node(T.Pop());
-                            temp.right = S.Pop();
-                            temp.left = S.Pop();
-                            S.Push(temp);
-                        }
+
+                        Node temp = new Node(T.Pop());
+                        temp.right = S.Pop();
+                        temp.left = S.Pop();
+                        S.Push(temp);
                     }
-                    char tmp = T.Pop();
+                    string tmp = T.Pop();
                 }
                 //Step 7
                 else if (isAnOperationChar(token))
@@ -269,7 +407,7 @@ namespace Proyecto_LFYA.Utilities
             if (S.Count == 1)
             {
                 //Step 13
-                this.root = S.Pop();
+                root = S.Pop();
             }
             else
             {

@@ -13,7 +13,7 @@ namespace Proyecto_LFYA.Utilities
 
         public FollowTable(ExpressionTree tree)
         {
-            nodes.Add(new Follow(Epsilon.ToString())); //Set apart first position, to use it later as an initial state
+            nodes.Add(new Follow(Epsilon)); //Set apart first position, to use it later as an initial state
             evaluateTree(tree.root); //Get all the follows
 
             //Initial state
@@ -30,7 +30,7 @@ namespace Proyecto_LFYA.Utilities
         {
             if (root.isLeaf())
             {
-                nodes.Add(new Follow(root.element.ToString()));
+                nodes.Add(new Follow(root.element));
             }
             else
             {

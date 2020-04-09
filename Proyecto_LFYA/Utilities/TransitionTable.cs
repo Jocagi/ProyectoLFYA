@@ -40,13 +40,13 @@ namespace Proyecto_LFYA.Utilities
             foreach (var element in _followTable.nodes)
             {
                 if (!symbolsList.Contains(element.character) 
-                    && element.character != ExpressionCharacters.EndCharacter.ToString())
+                    && element.character != ExpressionCharacters.EndCharacter)
                 {
                     symbolsList.Add(element.character);   
                 }
             }
 
-            symbolsList.Remove(ExpressionCharacters.Epsilon.ToString());
+            symbolsList.Remove(ExpressionCharacters.Epsilon);
             symbolsList.Sort();
         }
         

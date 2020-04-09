@@ -56,7 +56,7 @@ namespace Proyecto_LFYA
                 AnalizarGramatica f = new AnalizarGramatica(file);
                 f.Show();
             }
-            this.Hide();
+            Hide();
         }
 
         private void AnalizarArchivo(string file)
@@ -84,7 +84,15 @@ namespace Proyecto_LFYA
 
         private void detailsButton_Click(object sender, EventArgs e)
         {
-            tree = Utilities.AnalizarGramatica.obtenerArbolDeGramatica(grammarTextBox.Text);
+            try
+            {
+                tree = Utilities.AnalizarGramatica.obtenerArbolDeGramatica(grammarTextBox.Text);
+                MessageBox.Show("Yay! Si funciono :)");
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
         }
     }
 }
