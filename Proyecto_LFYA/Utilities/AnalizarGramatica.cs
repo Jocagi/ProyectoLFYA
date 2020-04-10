@@ -252,7 +252,15 @@ namespace Proyecto_LFYA.Utilities
                 }
             }
 
-            sets.Add(setName, asciiValues.ToArray());
+            if (setName.Length > 1)
+            {
+                sets.Add(setName, asciiValues.ToArray());
+            }
+            else
+            {
+                throw new Exception($"El nombre del SET {setName} debe ser mas largo.");
+            }
+
         }
 
         private static int formatSET(string token)
@@ -355,7 +363,7 @@ namespace Proyecto_LFYA.Utilities
                 {
                     if (text[i] == '\'')
                     {
-                        result += text[i + 1];
+                        result += $"'{text[i + 1]}'";
                         i += 2;
                     }
                     else if (text[i] == '{')

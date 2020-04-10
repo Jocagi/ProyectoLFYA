@@ -14,6 +14,10 @@ namespace Proyecto_LFYA
 {
     public partial class TreeDetails : Form
     {
+        private ExpressionTree tree;
+        private FollowTable follows;
+        private TransitionTable transitions;
+
         public TreeDetails()
         {
             InitializeComponent();
@@ -22,10 +26,22 @@ namespace Proyecto_LFYA
         public TreeDetails(ExpressionTree tree)
         {
             InitializeComponent();
-            PaintTree(tree);
+            this.tree = tree;
+
+            expressionTextBox.Text = tree.expression;
         }
 
-        void PaintTree(ExpressionTree _tree)
+        public TreeDetails(ExpressionTree tree, FollowTable follows, TransitionTable transitions)
+        {
+            InitializeComponent();
+            this.tree = tree;
+            this.follows = follows;
+            this.transitions = transitions;
+
+            expressionTextBox.Text = tree.expression;
+        }
+
+        public void PaintTree(ExpressionTree _tree)
         {
             if (_tree == null) return;
             treePictureBox.Image = _tree.Draw();
@@ -63,6 +79,96 @@ namespace Proyecto_LFYA
             {
                 MessageBox.Show(exp.Message);
             }
+        }
+
+        private void loadTree()
+        {
+            PaintTree(tree);
+        }
+
+        private void loadFunctions()
+        {
+            List<string[]> functions = tree.getValuesOfNodes();
+            
+            TreeData.Columns.Add("SIMBOLO", "SIMBOLO");
+            TreeData.Columns.Add("FIRST", "FIRST");
+            TreeData.Columns.Add("LAST", "LAST");
+            TreeData.Columns.Add("NULLABLE", "NULLABLE");
+
+            int length = functions.Count;
+            for (int i = 0; i < length; i++)
+            {
+                TreeData.Rows.Add();
+
+                TreeData.Rows[i].Cells[0].Value = functions[i][0];
+                TreeData.Rows[i].Cells[1].Value = functions[i][1];
+                TreeData.Rows[i].Cells[2].Value = functions[i][2];
+                TreeData.Rows[i].Cells[3].Value = functions[i][3];
+            }
+        }
+
+        private void loadFollows()
+        {
+            followData.Columns.Add("SIMBOLO", "SIMBOLO");
+            followData.Columns.Add("FOLLOW", "FOLLOW");
+
+            for (int rowIndex = 1; rowIndex < follows.nodes.Count; rowIndex++)
+            {
+                var item = follows.nodes[rowIndex];
+                followData.Rows.Add();
+                followData.Rows[rowIndex - 1].Cells[0].Value = item.character;
+                followData.Rows[rowIndex - 1].Cells[1].Value = string.Join(",", item.follows);
+            }
+        }
+
+        private void loadTransitions()
+        {
+            int indexCount = 1;
+            //Key=symbol, value=index
+            Dictionary<string, int> index = new Dictionary<string, int>();
+
+            //Columns
+            transitionData.Columns.Add("ESTADO", "ESTADO");
+            foreach (var item in transitions.symbolsList)
+            {
+                index.Add(item, indexCount);
+                transitionData.Columns.Add(item, item);
+                indexCount++;
+            }
+            //Rows (States)
+            for (int i = 0; i < transitions.states.Count; i++)
+            {
+                transitionData.Rows.Add("---");
+                var item = string.Join(",", transitions.states[i]);
+
+                transitionData.Rows[i].Cells[0].Value = item;
+            }
+            ////Rows (Transitions)
+            //foreach (var item in transitions.symbolsList)
+            //{
+            //    index.Add(item, indexCount);
+            //    transitionData.Columns.Add(item, item);
+            //    indexCount++;
+            //}
+        }
+
+        private void TreeDetails_Load(object sender, EventArgs e)
+        {
+
+            loadFunctions();
+            loadFollows();
+            loadTransitions();
+
+            Cursor.Current = Cursors.WaitCursor;
+
+            System.Threading.ThreadStart
+                FStart = loadTree;
+            System.Threading.Thread MyThread =
+                new System.Threading.Thread(FStart);
+            MyThread.Start();
+
+            Cursor.Current = Cursors.Default;
+
         }
     }
 }

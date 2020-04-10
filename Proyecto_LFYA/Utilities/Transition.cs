@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class Transition
+    public class Transition
     {
         /// <summary>
         /// Simbolo necesario para acceder a este estado

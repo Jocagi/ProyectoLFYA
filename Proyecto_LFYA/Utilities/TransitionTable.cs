@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class TransitionTable
+    public class TransitionTable
     {
         /// <summary>
         /// Listado de todos los simbolos de esta expresion regular

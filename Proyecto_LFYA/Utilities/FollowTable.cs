@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_LFYA.Utilities
 {
-    class FollowTable:ExpressionCharacters
+    public class FollowTable:ExpressionCharacters
     {
         //Dictionary with posible next positions
         public List<Follow> nodes = new List<Follow>(); 

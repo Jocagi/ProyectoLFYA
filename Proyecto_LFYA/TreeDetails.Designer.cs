@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.treePictureBox = new System.Windows.Forms.PictureBox();
             this.download = new System.Windows.Forms.Button();
             this.expressionTextBox = new System.Windows.Forms.RichTextBox();
             this.TreeData = new System.Windows.Forms.DataGridView();
@@ -37,23 +36,12 @@
             this.followData = new System.Windows.Forms.DataGridView();
             this.label3 = new System.Windows.Forms.Label();
             this.transitionData = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.treePictureBox)).BeginInit();
+            this.treePictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.TreeData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.followData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.transitionData)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.treePictureBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // treePictureBox
-            // 
-            this.treePictureBox.BackgroundImage = global::Proyecto_LFYA.Properties.Resources.background_blue;
-            this.treePictureBox.Image = global::Proyecto_LFYA.Properties.Resources.Gaticornio;
-            this.treePictureBox.Location = new System.Drawing.Point(12, 87);
-            this.treePictureBox.Name = "treePictureBox";
-            this.treePictureBox.Size = new System.Drawing.Size(724, 525);
-            this.treePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.treePictureBox.TabIndex = 0;
-            this.treePictureBox.TabStop = false;
-            this.treePictureBox.WaitOnLoad = true;
             // 
             // download
             // 
@@ -67,7 +55,7 @@
             // 
             // expressionTextBox
             // 
-            this.expressionTextBox.Font = new System.Drawing.Font("SimSun-ExtB", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.expressionTextBox.Font = new System.Drawing.Font("Sitka Text", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.expressionTextBox.Location = new System.Drawing.Point(13, 13);
             this.expressionTextBox.Name = "expressionTextBox";
             this.expressionTextBox.ReadOnly = true;
@@ -84,7 +72,9 @@
             this.TreeData.Name = "TreeData";
             this.TreeData.ReadOnly = true;
             this.TreeData.RowTemplate.Height = 28;
-            this.TreeData.Size = new System.Drawing.Size(568, 150);
+            this.TreeData.RowTemplate.ReadOnly = true;
+            this.TreeData.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.TreeData.Size = new System.Drawing.Size(687, 150);
             this.TreeData.TabIndex = 3;
             // 
             // label1
@@ -114,7 +104,7 @@
             this.followData.Name = "followData";
             this.followData.ReadOnly = true;
             this.followData.RowTemplate.Height = 28;
-            this.followData.Size = new System.Drawing.Size(568, 179);
+            this.followData.Size = new System.Drawing.Size(687, 179);
             this.followData.TabIndex = 5;
             // 
             // label3
@@ -135,14 +125,27 @@
             this.transitionData.Name = "transitionData";
             this.transitionData.ReadOnly = true;
             this.transitionData.RowTemplate.Height = 28;
-            this.transitionData.Size = new System.Drawing.Size(568, 168);
+            this.transitionData.Size = new System.Drawing.Size(683, 168);
             this.transitionData.TabIndex = 7;
+            // 
+            // treePictureBox
+            // 
+            this.treePictureBox.BackgroundImage = global::Proyecto_LFYA.Properties.Resources.background_blue;
+            this.treePictureBox.Image = global::Proyecto_LFYA.Properties.Resources.loading_cat;
+            this.treePictureBox.Location = new System.Drawing.Point(12, 87);
+            this.treePictureBox.Name = "treePictureBox";
+            this.treePictureBox.Size = new System.Drawing.Size(724, 525);
+            this.treePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.treePictureBox.TabIndex = 0;
+            this.treePictureBox.TabStop = false;
+            this.treePictureBox.WaitOnLoad = true;
             // 
             // TreeDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1337, 665);
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(1924, 697);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.transitionData);
             this.Controls.Add(this.label2);
@@ -153,14 +156,16 @@
             this.Controls.Add(this.download);
             this.Controls.Add(this.treePictureBox);
             this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(1735, 753);
             this.Name = "TreeDetails";
             this.ShowIcon = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Tree Details";
-            ((System.ComponentModel.ISupportInitialize)(this.treePictureBox)).EndInit();
+            this.Load += new System.EventHandler(this.TreeDetails_Load);
             ((System.ComponentModel.ISupportInitialize)(this.TreeData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.followData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.transitionData)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.treePictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

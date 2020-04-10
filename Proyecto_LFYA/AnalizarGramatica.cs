@@ -71,6 +71,7 @@ namespace Proyecto_LFYA
                 grammarTextBox.Text = text;
 
                 //todo validar bool de analizar gramatica
+                //todo mostrar ubicacion del error
                 if (resultTextBox.Text.Contains("Correcto"))
                 {
                     detailsButton.Visible = true;
@@ -82,12 +83,16 @@ namespace Proyecto_LFYA
             }
         }
 
-        private void detailsButton_Click(object sender, EventArgs e)
+        private async void detailsButton_Click(object sender, EventArgs e)
         {
             try
             {
                 tree = Utilities.AnalizarGramatica.obtenerArbolDeGramatica(grammarTextBox.Text);
-                MessageBox.Show("Yay! Si funciono :)");
+                FollowTable follows = new FollowTable(tree);
+                TransitionTable transitions = new TransitionTable(follows);
+                
+                TreeDetails window = new TreeDetails(tree, follows, transitions);
+                window.Show();
             }
             catch (Exception exception)
             {

@@ -18,7 +18,8 @@ namespace Proyecto_LFYA.Utilities
         public string element { set; get; }
         public Node left { set; get; }
         public Node right { set; get; }
-        
+        public bool isSet { set; get; }
+
         //Functions
         public Node() { }
         public Node(string element)
@@ -39,6 +40,27 @@ namespace Proyecto_LFYA.Utilities
             g.FillEllipse(new LinearGradientBrush(new Point(0, 0), 
                 new Point(1, 1), Color.CornflowerBlue, Color.Black), rcl);
             g.DrawEllipse(new Pen(Color.Black, 2.1f), rcl); 
+        }
+
+        public Node(string element, bool isSet)
+        {
+            this.element = element;
+            this.isSet = isSet;
+
+            firstPos = new List<int>();
+            lastPos = new List<int>();
+
+            // get a Graphics from _nodeBg bitmap, 
+            var g = Graphics.FromImage(_nodeBg);
+            // set the smoothing mode
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            // get a rectangle of drawer
+            var rcl = new Rectangle(1, 1, _nodeBg.Width - 2, _nodeBg.Height - 2);
+            g.FillRectangle(Brushes.Transparent, rcl);
+            // get a ellipse of drawer
+            g.FillEllipse(new LinearGradientBrush(new Point(0, 0),
+                new Point(1, 1), Color.CornflowerBlue, Color.Black), rcl);
+            g.DrawEllipse(new Pen(Color.Black, 2.1f), rcl);
         }
         public Node(string element, Node left, Node right)
         {
@@ -106,7 +128,7 @@ namespace Proyecto_LFYA.Utilities
         /// <summary>
         /// the backgroung image of each nodes, the size of this bitmap affects the quality of output image
         /// </summary>
-        private static Bitmap _nodeBg = new Bitmap(120, 100);
+        private static readonly Bitmap _nodeBg = new Bitmap(90, 70);
         /// <summary>
         /// the free space between nodes on the drawed image, 
         /// </summary>

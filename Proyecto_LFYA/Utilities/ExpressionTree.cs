@@ -17,6 +17,11 @@ namespace Proyecto_LFYA.Utilities
         /// </summary>
         public Dictionary<string, int[]> sets = new Dictionary<string, int[]>();
 
+        /// <summary>
+        /// Regular expression that defines this tree
+        /// </summary>
+        public string expression;
+
         public ExpressionTree()
         {
             root = null;
@@ -24,6 +29,8 @@ namespace Proyecto_LFYA.Utilities
 
         public ExpressionTree(string expression)
         {
+            this.expression = expression;
+
             checkForEndCharacter(ref expression);
 
             //Shunting yard algorithm to generate tree
@@ -38,6 +45,9 @@ namespace Proyecto_LFYA.Utilities
         
         public ExpressionTree(string expression, Dictionary<string, int[]> sets)
         {
+            this.sets = sets;
+            this.expression = expression;
+
             checkForEndCharacter(ref expression);
             Queue<string> Tokens = getTokensFromGrammarExpression(expression, sets);
             shuntingYard(Tokens);
@@ -126,11 +136,8 @@ namespace Proyecto_LFYA.Utilities
 
                     if (itemAhead == Char_Separator) //if it ends with '
                     {
-                        if (isSpecialCharacter(expression[i + 1].ToString()))
-                        {
-                            tokens.Enqueue(Escape);
-                        }
 
+                        tokens.Enqueue(Escape);
                         tokens.Enqueue(expression[i + 1].ToString());
 
                         //Prevent a concatenation with an operation
@@ -146,9 +153,9 @@ namespace Proyecto_LFYA.Utilities
                         throw new Exception("Formato invalido, se esperaba '");
                     }
                 }
-                else if (isABinaryOperationChar(item) || item == Grouping_Open ||
+                else if ((isABinaryOperationChar(item) || item == Grouping_Open ||
                          item == EndCharacter || isAnOperationChar(expression[i + 1].ToString()) ||
-                         expression[i + 1].ToString() == Grouping_Close)
+                         expression[i + 1].ToString() == Grouping_Close))
                 {
                     tokens.Enqueue(expression[i].ToString());
                 }
@@ -223,7 +230,12 @@ namespace Proyecto_LFYA.Utilities
                         result += item;
                     }
                 }
-                else if (result[result.Length -1] != ' ' && !isAnOperationChar(input[i + 1].ToString())) //if last item added was not a blankspace
+                //if last item added was not a blankspace or the bext is a parentesis
+                else if ((result[result.Length -1] != ' ' && 
+                         !isAnOperationChar(input[i + 1].ToString()) &&
+                         result[result.Length - 1] != '\'') &&
+                         (input[i + 1].ToString() != Grouping_Close) &&
+                         (input[i + 1] != ' ')) 
                 {
                     result += item;
                 }
@@ -301,7 +313,7 @@ namespace Proyecto_LFYA.Utilities
                     if (regularExpression.Count > 0)
                     {
                         token = regularExpression.Dequeue();
-                        S.Push(new Node(token));
+                        S.Push(new Node(token, false));
                     }
                     else
                     {
@@ -311,7 +323,7 @@ namespace Proyecto_LFYA.Utilities
                 //Step 4
                 else if (isATerminalCharacter(token))
                 {
-                    S.Push(new Node(token));
+                    S.Push(new Node(token, true));
                 }
                 //Step 5
                 else if (token == Grouping_Open)
@@ -640,6 +652,52 @@ namespace Proyecto_LFYA.Utilities
             int temp;
             return root == null ? null : root.Draw(out temp);
         }
+        
+        //Get list of values of the node
+        public List<string[]> getValuesOfNodes()
+        {
+            //Simbolo, First, Last, Nullable
+            List<string[]> cells = new List<string[]>();
+            int j = 0;
 
+            getValuesOfNodes(root, ref cells, ref j);
+
+            return cells;
+        }
+
+        private void getValuesOfNodes(Node i, ref List<string[]> cells, ref int j)
+        {
+            if (i.left != null)
+            {
+                j++;
+                getValuesOfNodes(i.left, ref cells, ref j);
+            }
+            if (i.right != null)
+            {
+                j++;
+                getValuesOfNodes(i.right, ref cells, ref j);
+            }
+
+            cells.Add(new[]
+            {i.element, string.Join( ",", i.firstPos),
+                string.Join( ",", i.lastPos), i.nullable.ToString()});
+
+        }
+
+        private int countNodes()
+        {
+            return countNodes(root);
+        }
+        private int countNodes(Node i)
+        {
+            if (i != null)
+            {
+                return 1 + countNodes(i.left) + countNodes(i.right);
+            }
+            else
+            {
+                return 0;
+            }
+        }
     }
 }
