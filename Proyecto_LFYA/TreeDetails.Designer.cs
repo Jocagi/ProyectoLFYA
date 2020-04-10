@@ -125,7 +125,7 @@
             this.transitionData.Name = "transitionData";
             this.transitionData.ReadOnly = true;
             this.transitionData.RowTemplate.Height = 28;
-            this.transitionData.Size = new System.Drawing.Size(683, 168);
+            this.transitionData.Size = new System.Drawing.Size(683, 217);
             this.transitionData.TabIndex = 7;
             // 
             // treePictureBox

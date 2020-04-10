@@ -133,23 +133,36 @@ namespace Proyecto_LFYA
             {
                 index.Add(item, indexCount);
                 transitionData.Columns.Add(item, item);
+                transitionData.Columns[item].DefaultCellStyle.NullValue = "---";
                 indexCount++;
             }
             //Rows (States)
             for (int i = 0; i < transitions.states.Count; i++)
             {
-                transitionData.Rows.Add("---");
+                transitionData.Rows.Add();
                 var item = string.Join(",", transitions.states[i]);
 
                 transitionData.Rows[i].Cells[0].Value = item;
             }
-            ////Rows (Transitions)
-            //foreach (var item in transitions.symbolsList)
-            //{
-            //    index.Add(item, indexCount);
-            //    transitionData.Columns.Add(item, item);
-            //    indexCount++;
-            //}
+            //Rows (Transitions)
+            for (int i = 0; i < transitions.states.Count; i++)
+            {
+                foreach (var item in transitions.transitions[i])
+                {
+                    transitionData.Rows[i].Cells[item.symbol].Value = string.Join(",", item.nodes);
+                }
+            }
+            //Rows (Fill in the blanks)
+            for (int i = 0; i < transitionData.Rows.Count; i++)
+            {
+                for (int j = 0; j < transitionData.Columns.Count; j++)
+                {
+                    if (string.IsNullOrEmpty(transitionData.Rows[i].Cells[j].Value.ToString()))
+                    {
+                        transitionData.Rows[i].Cells[j].Value = "---";
+                    }   
+                }   
+            }
         }
 
         private void TreeDetails_Load(object sender, EventArgs e)
