@@ -501,7 +501,7 @@ namespace Proyecto_LFYA.Utilities
                         i.nullable = true;
                         break;
                     case KleenePlus:
-                        i.nullable = false;
+                        i.nullable = i.left.nullable;
                         break;
                     case QuestionMark:
                         i.nullable = true;

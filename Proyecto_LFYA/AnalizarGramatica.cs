@@ -66,16 +66,38 @@ namespace Proyecto_LFYA
 
             try
             {
+                int linea = 0;
                 string text = File.ReadAllText(file);
-                resultTextBox.Text = Utilities.AnalizarGramatica.analizarAchivoGramatica(text);
+                resultTextBox.Text = Utilities.AnalizarGramatica.analizarAchivoGramatica(text, ref linea);
                 grammarTextBox.Text = text;
-
-                //todo validar bool de analizar gramatica
-                //todo mostrar ubicacion del error
+                
                 if (resultTextBox.Text.Contains("Correcto"))
                 {
+                    resultTextBox.BackColor = Color.LightGray;
+                    resultTextBox.ForeColor = Color.Green;
+
                     detailsButton.Visible = true;
                 }
+                else
+                {
+                    resultTextBox.BackColor = Color.LightGray;
+                    resultTextBox.ForeColor = Color.Crimson;
+
+                    //Ubicacion del error
+                    int lineCounter = 0;
+
+                    foreach (string line in grammarTextBox.Lines)
+                    {
+                        //add conditional statement if not selecting all the lines
+                        if (linea - 1 == lineCounter)
+                        {
+                            grammarTextBox.Select(grammarTextBox.GetFirstCharIndexFromLine(lineCounter), line.Length);
+                            grammarTextBox.SelectionColor = Color.Red;
+                        }
+                        lineCounter++;
+                    }
+                }
+
             }
             catch (Exception ex)
             {

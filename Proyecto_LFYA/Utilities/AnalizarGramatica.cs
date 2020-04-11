@@ -10,7 +10,6 @@ namespace Proyecto_LFYA.Utilities
 {
     class AnalizarGramatica
     {
-        //private static string expresionRegular = "(( *SETS *)([A-Z]+ *= *(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\\([0-9]\\)(..CHR\\([0-9]\\))?)|(CHR\\([0-9]+\\))((..CHR\\([0-9]+\\))?))(( *\\+ *)(('[Simbolo]')|('([A-Z]|[a-z]|[0-9])+'(..'([A-Z]|[a-z]|[0-9])+')?)|(CHR\\([0-9]\\)(..CHR\\([0-9]\\))?)|(CHR\\([0-9]+\\))((..CHR\\([0-9]+\\))?)))* *)+)?(( *TOKENS *)(TOKEN *[0-9]+ *= *(([A-Z]+)|(\\( *[A-Z] *)\\)|('([Simbolo]|[A-Z]|[a-z]|[0-9])')| |\\?|\\||\\*|\\+|\\(|\\)|({ *[A-Z]+\\(\\) *}))+ *)+)( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *}([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
         private static string expresionSET 
             = " *[A-Z]+ *= *((('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\)))(..(('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\))))?)+ *#";
         private static string expresionTOKEN 
@@ -18,7 +17,7 @@ namespace Proyecto_LFYA.Utilities
         private static string expresionACTIONSYERROR 
             = "( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *} *([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
 
-        public static string analizarAchivoGramatica(string text)
+        public static string analizarAchivoGramatica(string text, ref int linea)
         {
             text = text.Replace('\r', ' ');
             text = text.Replace('\t', ' ');
@@ -63,7 +62,8 @@ namespace Proyecto_LFYA.Utilities
                         }
                         else
                         {
-                            return "Error: Se esperaba SETS|TOKENS";
+                            linea = 1;
+                            return "Error en linea 1: Se esperaba SETS|TOKENS";
                         }
                     }
                     else if (setActive)
@@ -72,6 +72,7 @@ namespace Proyecto_LFYA.Utilities
                         {
                             if (setCount < 1)
                             {
+                                linea = count;
                                 return "Error: Se esperaba almenos un SET";
                             }
                             setActive = false;
@@ -82,7 +83,8 @@ namespace Proyecto_LFYA.Utilities
                             mensaje = regSET.ValidateString(item);
                             if (mensaje.Contains("Error"))
                             {
-                                return $"Error en linea:{count}\n{mensaje}";
+                                linea = count;
+                                return $"Error en linea: {count} \n{mensaje}";
                             }
                             setCount++;
                         }
@@ -93,6 +95,7 @@ namespace Proyecto_LFYA.Utilities
                         {
                             if (tokenCount < 1)
                             {
+                                linea = count;
                                 return "Error: Se esperaba almenos un TOKEN";
                             }
                             actions = "ACTIONS";
@@ -104,7 +107,8 @@ namespace Proyecto_LFYA.Utilities
                             mensaje = regTOKEN.ValidateString(item);
                             if (mensaje.Contains("Error"))
                             {
-                                return $"Error en linea:{count}\n{mensaje}";
+                                linea = count;
+                                return $"Error en linea: {count} \n{mensaje}";
                             }
                             tokenCount++;
                         }
@@ -117,7 +121,8 @@ namespace Proyecto_LFYA.Utilities
             }
 
             mensaje = regOTRO.ValidateString(actions);
-
+            
+            linea = count;
             return mensaje;
         }
 
