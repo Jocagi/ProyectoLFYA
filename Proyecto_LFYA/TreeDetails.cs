@@ -119,6 +119,11 @@ namespace Proyecto_LFYA
                 followData.Rows[rowIndex - 1].Cells[0].Value = item.character;
                 followData.Rows[rowIndex - 1].Cells[1].Value = string.Join(",", item.follows);
             }
+
+            DataGridViewColumn column1 = followData.Columns[0];
+            DataGridViewColumn column2 = followData.Columns[1];
+            column1.Width = 200;
+            column2.Width = 200;
         }
 
         private void loadTransitions()

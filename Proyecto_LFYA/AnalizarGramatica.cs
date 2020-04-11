@@ -77,6 +77,10 @@ namespace Proyecto_LFYA
                     resultTextBox.ForeColor = Color.Green;
 
                     detailsButton.Visible = true;
+
+
+                    tree = Utilities.AnalizarGramatica.obtenerArbolDeGramatica(grammarTextBox.Text);
+                    
                 }
                 else
                 {
@@ -88,7 +92,6 @@ namespace Proyecto_LFYA
 
                     foreach (string line in grammarTextBox.Lines)
                     {
-                        //add conditional statement if not selecting all the lines
                         if (linea - 1 == lineCounter)
                         {
                             grammarTextBox.Select(grammarTextBox.GetFirstCharIndexFromLine(lineCounter), line.Length);
@@ -101,15 +104,34 @@ namespace Proyecto_LFYA
             }
             catch (Exception ex)
             {
+
+                resultTextBox.BackColor = Color.LightGray;
+                resultTextBox.ForeColor = Color.Crimson;
+
+                resultTextBox.Text = "Error en TOKENS";
+                detailsButton.Visible = false;
+                
                 MessageBox.Show(ex.Message);
+
+                //Show in red all lines in tokens
+                int lineCounter = 0;
+
+                foreach (string line in grammarTextBox.Lines)
+                {
+                    if (line.Contains("TOKEN"))
+                    {
+                        grammarTextBox.Select(grammarTextBox.GetFirstCharIndexFromLine(lineCounter), line.Length);
+                        grammarTextBox.SelectionColor = Color.Red;
+                    }
+                    lineCounter++;
+                }
             }
         }
 
-        private async void detailsButton_Click(object sender, EventArgs e)
+        private void detailsButton_Click(object sender, EventArgs e)
         {
             try
             {
-                tree = Utilities.AnalizarGramatica.obtenerArbolDeGramatica(grammarTextBox.Text);
                 FollowTable follows = new FollowTable(tree);
                 TransitionTable transitions = new TransitionTable(follows);
                 

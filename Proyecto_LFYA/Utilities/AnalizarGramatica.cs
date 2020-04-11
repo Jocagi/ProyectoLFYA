@@ -13,7 +13,7 @@ namespace Proyecto_LFYA.Utilities
         private static string expresionSET 
             = " *[A-Z]+ *= *((('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\)))(..(('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\))))?)+ *#";
         private static string expresionTOKEN 
-            = "( *TOKEN *[0-9]+ *= *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\||\\*|\\+|({ *[A-Z]+\\(\\) *}))|( *\\( *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\||\\*|\\+|({ *[A-Z]+\\(\\) *})))+ *\\) *))+ *)+#";
+            = "( *TOKEN *[0-9]+ *= *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(+( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\(|\\)|\\||\\*|\\+|({ *[A-Z]+\\(\\) *}))|( *\\( *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\(|\\)|\\||\\*|\\+|({ *[A-Z]+\\(\\) *})))+ *\\)+ *))+ *)+#";
         private static string expresionACTIONSYERROR 
             = "( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *} *([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
 
@@ -85,6 +85,11 @@ namespace Proyecto_LFYA.Utilities
                             {
                                 linea = count;
                                 return $"Error en linea: {count} \n{mensaje}";
+                            }
+                            if (!areParenthesisPaired(item))
+                            {
+                                linea = count;
+                                return $"Error en linea: {count} \nSe esperaba ()";
                             }
                             setCount++;
                         }
@@ -206,6 +211,44 @@ namespace Proyecto_LFYA.Utilities
             else
             {
                 throw new Exception("Se esperaba mas tokens");
+            }
+        }
+
+        private static bool areParenthesisPaired(string expression)
+        {
+            if (expression.Contains('(') || expression.Contains(')'))
+            {
+                int Open = 0;
+                int Close = 0;
+
+                expression = expression.Replace(" ", "");
+
+                for (int i = 0; i < expression.Length; i++)
+                {
+                    if (expression[i] == '\'')
+                    {
+                        i += 2;
+                    }
+                    else if (expression[i] == '(')
+                    {
+                        Open++;
+                    }
+                    else if (expression[i] == ')')
+                    {
+                        Close++;
+                    }
+                }
+
+                if (Open == Close)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            else
+            {
+                return true;
             }
         }
 
