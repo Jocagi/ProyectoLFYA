@@ -11,7 +11,8 @@ namespace Proyecto_LFYA.Utilities
     class AnalizarGramatica
     {
         private static string expresionSET 
-            = " *[A-Z]+ *= *((('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\)))(..(('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\))))?)+ *#";
+            = " *[A-Z]+ *= *((('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\)))( *. *. *(('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\))))?)+ *" +
+              "( *\\+ *((('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\)))( *. *. *(('([A-Z]|[a-z]|[0-9]|[Simbolo])+')|(CHR\\([0-9]+\\))))?))* *#";
         private static string expresionTOKEN 
             = "( *TOKEN *[0-9]+ *= *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(+( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\(|\\)|\\||\\*|\\+|({ *[A-Z]+\\(\\) *}))|( *\\( *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\(|\\)|\\||\\*|\\+|({ *[A-Z]+\\(\\) *})))+ *\\)+ *))+ *)+#";
         private static string expresionACTIONSYERROR 
@@ -84,6 +85,7 @@ namespace Proyecto_LFYA.Utilities
                             if (mensaje.Contains("Error"))
                             {
                                 linea = count;
+                                mensaje = mensaje.Replace(ExpressionCharacters.Epsilon, " TOKENS");
                                 return $"Error en linea: {count} \n{mensaje}";
                             }
                             if (!areParenthesisPaired(item))
