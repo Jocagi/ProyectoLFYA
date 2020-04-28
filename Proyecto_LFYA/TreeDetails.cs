@@ -148,6 +148,12 @@ namespace Proyecto_LFYA
                 var item = string.Join(",", transitions.states[i]);
 
                 transitionData.Rows[i].Cells[0].Value = item;
+
+                //If it is Accepted status
+                if (transitions.states[i].Contains(transitions._followTable.nodes.Count - 1)) 
+                {
+                    transitionData.Rows[i].Cells[0].Style.BackColor = Color.CadetBlue;
+                }
             }
             //Rows (Transitions)
             for (int i = 0; i < transitions.states.Count; i++)
@@ -176,17 +182,13 @@ namespace Proyecto_LFYA
             loadFunctions();
             loadFollows();
             loadTransitions();
-
-            Cursor.Current = Cursors.WaitCursor;
-
+            
             System.Threading.ThreadStart
                 FStart = loadTree;
             System.Threading.Thread MyThread =
                 new System.Threading.Thread(FStart);
             MyThread.Start();
-
-            Cursor.Current = Cursors.Default;
-
+            
         }
     }
 }

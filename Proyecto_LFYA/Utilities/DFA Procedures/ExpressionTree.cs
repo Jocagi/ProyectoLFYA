@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Proyecto_LFYA.Utilities.DFA_Procedures;
+using Action = System.Action;
 
 namespace Proyecto_LFYA.Utilities
 {
@@ -15,7 +17,25 @@ namespace Proyecto_LFYA.Utilities
         /// <summary>
         /// Dictionary with definitions of sets
         /// </summary>
-        public Dictionary<string, int[]> sets = new Dictionary<string, int[]>();
+        public Dictionary<string, string[]> sets = new Dictionary<string, string[]>();
+
+        /// <summary>
+        /// List with definitions of actions
+        /// </summary>
+        public List<Action> actions = new List<Action>();
+
+        /// <summary>
+        /// Indicates a reference from a token to an action.
+        ///
+        /// Key=TokenNumber
+        /// Value=ActionName
+        /// </summary>
+        public Dictionary<int, string> actionReference = new Dictionary<int, string>();
+
+        /// <summary>
+        /// List with token number and expeted final values.
+        /// </summary>
+        public List<Token> tokens = new List<Token>();
 
         /// <summary>
         /// Regular expression that defines this tree
@@ -43,7 +63,7 @@ namespace Proyecto_LFYA.Utilities
             setLastPos();
         }
         
-        public ExpressionTree(string expression, Dictionary<string, int[]> sets)
+        public ExpressionTree(string expression, Dictionary<string, string[]> sets)
         {
             this.sets = sets;
             this.expression = expression;
@@ -113,7 +133,7 @@ namespace Proyecto_LFYA.Utilities
         /// <summary>
         /// Adds each character and custom values defined in sets from the string to a Queque 
         /// </summary>
-        private Queue<string> getTokensFromGrammarExpression(string expression, Dictionary<string, int[]> sets)
+        private Queue<string> getTokensFromGrammarExpression(string expression, Dictionary<string, string[]> sets)
         {
             expression = removeExtraSpacesFromString(expression);
 

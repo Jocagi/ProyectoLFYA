@@ -26,7 +26,7 @@ namespace Proyecto_LFYA.Utilities
         /// </summary>
         public List<List<int>> states = new List<List<int>>();
 
-        private readonly FollowTable _followTable;
+        public readonly FollowTable _followTable;
 
         public TransitionTable(FollowTable _followTable)
         {

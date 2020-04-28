@@ -29,8 +29,8 @@ namespace Proyecto_LFYA
             //ExpressionTree tree = new ExpressionTree(textExpression.Text);
             //PaintTree(tree);
 
-            Dictionary<string, int[]> sets = new Dictionary<string, int[]>();
-            sets.Add("LETRA", new []{ 97, 98, 99, 100});
+            Dictionary<string, string[]> sets = new Dictionary<string, string[]>();
+            sets.Add("LETRA", new []{ "97,100", "107" });
             ExpressionTree tree2 = new ExpressionTree(textExpression.Text, sets);
             PaintTree(tree2);
 

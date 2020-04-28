@@ -135,8 +135,9 @@ namespace Proyecto_LFYA.Utilities
 
         public static ExpressionTree obtenerArbolDeGramatica(string text)
         {
-            Dictionary<string, int[]> sets = new Dictionary<string, int[]>();
+            Dictionary<string, string[]> sets = new Dictionary<string, string[]>();
             string token = ""; //Each token will be concatenated
+            string actions = ""; //All actions are concatenated
 
             text = text.Replace('\r', ' ');
             text = text.Replace('\t', ' ');
@@ -200,8 +201,18 @@ namespace Proyecto_LFYA.Utilities
                             AddNewTOKEN(ref tokensList, ref token, item);
                         }
                     }
-
-                    //todo add ACTIONS and ERROR reader. (Fase 3)
+                    else if (actionActive)
+                    {
+                        if (item.Contains("Error") && item.Contains("="))
+                        {
+                            AddActions(actions);
+                            break;//Exit procedure
+                        }
+                        else
+                        {
+                            actions += item;
+                        }
+                    }
                 }
             }
 
@@ -255,9 +266,9 @@ namespace Proyecto_LFYA.Utilities
         }
 
         //SET reader
-        private static void AddNewSET(ref Dictionary<string, int[]> sets, string text)
+        private static void AddNewSET(ref Dictionary<string, string[]> sets, string text)
         {
-            List<int> asciiValues = new List<int>();
+            List<string> asciiValues = new List<string>();
             string setName = "";
 
             string[] line = text.Split('=');
@@ -287,21 +298,14 @@ namespace Proyecto_LFYA.Utilities
                     int lowerLimit = formatSET(Limits[0]);
                     int upperLimit = formatSET(Limits[1]); ;
                     
-                    //get all ascii values
-                    for (int i = lowerLimit; i <= upperLimit; i--)
-                    {
-                        //Add to values
-                        asciiValues.Add(i);
-
-                        //Increment i, to fit all ascii values (256)
-                        i = (i + 2) % 257;
-                    }
+                    //Add range of values
+                    asciiValues.Add($"{lowerLimit},{upperLimit}");
                 }
                 else if (Limits.Count == 1)
                 {
                     int character = formatSET(Limits[0]);
 
-                    asciiValues.Add(character);
+                    asciiValues.Add(character.ToString());
                 }
             }
 
@@ -442,6 +446,12 @@ namespace Proyecto_LFYA.Utilities
             }
 
             return text;
+        }
+
+        //ACTIONS reader
+        private static void AddActions(string text)
+        {
+
         }
     }
 }

@@ -67,15 +67,19 @@
       <DependentUpon>TreeDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\AnalizarGramatica.cs" />
-    <Compile Include="Utilities\DFA.cs" />
-    <Compile Include="Utilities\ExpressionCharacters.cs" />
-    <Compile Include="Utilities\ExpressionTree.cs" />
-    <Compile Include="Utilities\Follow.cs" />
-    <Compile Include="Utilities\FollowTable.cs" />
-    <Compile Include="Utilities\Node.cs" />
+    <Compile Include="Utilities\DFA Procedures\Action.cs" />
+    <Compile Include="Utilities\DFA Procedures\DFA.cs" />
+    <Compile Include="Utilities\DFA Procedures\ExpressionCharacters.cs" />
+    <Compile Include="Utilities\DFA Procedures\ExpressionTree.cs" />
+    <Compile Include="Utilities\DFA Procedures\Follow.cs" />
+    <Compile Include="Utilities\DFA Procedures\FollowTable.cs" />
+    <Compile Include="Utilities\DFA Procedures\Node.cs" />
+    <Compile Include="Utilities\DFA Procedures\Token.cs" />
     <Compile Include="Utilities\RegEx.cs" />
-    <Compile Include="Utilities\Transition.cs" />
-    <Compile Include="Utilities\TransitionTable.cs" />
+    <Compile Include="Utilities\DFA Procedures\Transition.cs" />
+    <Compile Include="Utilities\DFA Procedures\TransitionTable.cs" />
+    <Compile Include="Utilities\Scanner\CS_CodeTools.cs" />
+    <Compile Include="Utilities\Scanner\ScannerGenerator.cs" />
     <EmbeddedResource Include="AnalizarGramatica.resx">
       <DependentUpon>AnalizarGramatica.cs</DependentUpon>
     </EmbeddedResource>
@@ -117,5 +121,6 @@
   <ItemGroup>
     <None Include="Resources\loading_cat.gif" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
