@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Proyecto_LFYA.Utilities.DFA_Procedures;
-using Action = System.Action;
+using Action = Proyecto_LFYA.Utilities.DFA_Procedures.Action;
 
 namespace Proyecto_LFYA.Utilities
 {
@@ -20,10 +20,15 @@ namespace Proyecto_LFYA.Utilities
         public Dictionary<string, string[]> sets = new Dictionary<string, string[]>();
 
         /// <summary>
+        /// List with token number and expeted final values.
+        /// </summary>
+        public List<Token> tokens = new List<Token>();
+        
+        /// <summary>
         /// List with definitions of actions
         /// </summary>
         public List<Action> actions = new List<Action>();
-
+        
         /// <summary>
         /// Indicates a reference from a token to an action.
         ///
@@ -32,11 +37,7 @@ namespace Proyecto_LFYA.Utilities
         /// </summary>
         public Dictionary<int, string> actionReference = new Dictionary<int, string>();
 
-        /// <summary>
-        /// List with token number and expeted final values.
-        /// </summary>
-        public List<Token> tokens = new List<Token>();
-
+        
         /// <summary>
         /// Regular expression that defines this tree
         /// </summary>
@@ -47,6 +48,7 @@ namespace Proyecto_LFYA.Utilities
             root = null;
         }
 
+        //[Deprecated]
         public ExpressionTree(string expression)
         {
             this.expression = expression;
@@ -62,8 +64,25 @@ namespace Proyecto_LFYA.Utilities
             setFirstPos();
             setLastPos();
         }
-        
+
+        ////[Deprecated]
         public ExpressionTree(string expression, Dictionary<string, string[]> sets)
+        {
+            this.sets = sets;
+            this.expression = expression;
+
+            checkForEndCharacter(ref expression);
+            Queue<string> Tokens = getTokensFromGrammarExpression(expression, sets);
+            shuntingYard(Tokens);
+
+            setNumberInNodes();
+            setNullableNodes();
+            setFirstPos();
+            setLastPos();
+        }
+
+        public ExpressionTree(string expression, Dictionary<string, string[]> sets,
+                                List<Action> actions, List<int> tokenNumbers, Dictionary<int, string> reference)
         {
             this.sets = sets;
             this.expression = expression;

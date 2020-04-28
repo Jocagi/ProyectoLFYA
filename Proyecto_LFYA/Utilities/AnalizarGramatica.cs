@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Proyecto_LFYA.Utilities.DFA_Procedures;
+using Action = Proyecto_LFYA.Utilities.DFA_Procedures.Action;
 
 namespace Proyecto_LFYA.Utilities
 {
@@ -17,6 +20,9 @@ namespace Proyecto_LFYA.Utilities
             = "( *TOKEN *[0-9]+ *= *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(+( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\(|\\)|\\||\\*|\\+|({ *[A-Z]+\\(\\) *}))|( *\\( *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\(|\\)|\\||\\*|\\+|({ *[A-Z]+\\(\\) *})))+ *\\)+ *))+ *)+#";
         private static string expresionACTIONSYERROR 
             = "( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *} *([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'[A-Z]+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
+
+        public static Dictionary<int, string> actionReference = new Dictionary<int, string>();
+
 
         public static string analizarAchivoGramatica(string text, ref int linea)
         {
@@ -136,6 +142,11 @@ namespace Proyecto_LFYA.Utilities
         public static ExpressionTree obtenerArbolDeGramatica(string text)
         {
             Dictionary<string, string[]> sets = new Dictionary<string, string[]>();
+            List<Action> actionsList = new List<Action>();
+
+            //List with the number of the tokens
+            List<int> tokensList = new List<int>();
+
             string token = ""; //Each token will be concatenated
             string actions = ""; //All actions are concatenated
 
@@ -150,9 +161,6 @@ namespace Proyecto_LFYA.Utilities
             bool setActive = false;
             bool tokenActive = false;
             bool actionActive = false;
-
-            //List with the number of the tokens
-            List<int> tokensList = new List<int>();
             
             string[] lineas = text.Split('\n');
             
@@ -203,9 +211,9 @@ namespace Proyecto_LFYA.Utilities
                     }
                     else if (actionActive)
                     {
-                        if (item.Contains("Error") && item.Contains("="))
+                        if (item.Contains("ERROR") && item.Contains("="))
                         {
-                            AddActions(actions);
+                            AddActions(actions, ref actionsList);
                             break;//Exit procedure
                         }
                         else
@@ -216,10 +224,17 @@ namespace Proyecto_LFYA.Utilities
                 }
             }
 
+            //Check for repeated token numbers
+            CheckForRepeatedTokens(tokensList, actionsList);
+
+            //Reset references
+            Dictionary<int, string> references = actionReference;
+            actionReference = new Dictionary<int, string>();
+
             //Create tree
             if (token != "")
             {
-                return new ExpressionTree(token, sets);
+                return new ExpressionTree(token, sets, actionsList, tokensList, references);
             }
             else
             {
@@ -263,6 +278,27 @@ namespace Proyecto_LFYA.Utilities
             {
                 return true;
             }
+        }
+
+        private static void CheckForRepeatedTokens(List<int> tokens, List<Action> actionsList)
+        {
+            List<int> repeated = new List<int>();
+
+            foreach (var action in actionsList)
+            {
+                foreach (var item in action.ActionValues.Keys)
+                {
+                    if (repeated.Contains(item) || tokens.Contains(item))
+                    {
+                        throw new Exception($"Error: El token {item} aparece más de una vez");
+                    }
+                    else
+                    {
+                        repeated.Add(item);
+                    }
+                }
+            }
+            //If it ends, it is correct
         }
 
         //SET reader
@@ -381,6 +417,7 @@ namespace Proyecto_LFYA.Utilities
 
         private static string[] SplitToken(string expression)
         {
+            string functionName = "";//When Token Contains { function() }
             string[] token = {"", ""};
 
             for (int i = 0; i < expression.Length; i++)
@@ -391,8 +428,6 @@ namespace Proyecto_LFYA.Utilities
                 }
                 else
                 {
-                    //todo Implement ask what to do with Reservadas()
-
                     string tmp = "";
 
                     for (int j = i + 1; j < expression.Length; j++)
@@ -400,20 +435,34 @@ namespace Proyecto_LFYA.Utilities
                         tmp += expression[j];
                     }
 
-                    token[1] = removeActionsFromExpression(tmp);
+                    token[1] = removeActionsFromExpression(tmp, ref functionName);
                     token[1] = token[1].Trim();
                     break;
                 }
             }
+            
+            //Validate token number (just for the reference)
+            if (!string.IsNullOrEmpty(functionName))
+            {
+                if (int.TryParse(token[0].Trim(), out int tokenNumber))
+                {
+                    actionReference.Add(tokenNumber, functionName.Trim());
+                }
+                else
+                {
+                    throw new Exception($"El nombre del TOKEN {token[0]} no es valido.");
+                }
 
+            }
+            
             return token;
         }
 
-        private static string removeActionsFromExpression(string text)
+        private static string removeActionsFromExpression(string text, ref string functionName)
         {
             //Remove everything contained within {}
             string result = "";
-
+            
             if (text.Contains('{') && text.Contains('}'))
             {
                 for (int i = 0; i < text.Length; i++)
@@ -432,7 +481,11 @@ namespace Proyecto_LFYA.Utilities
                         {
                             counter++;
                             actualChar = text[i + counter];
+                            functionName += actualChar;
                         }
+
+                        functionName.Replace("}", "");
+                        functionName = functionName.Trim();
 
                         i += counter;
                     }
@@ -441,7 +494,6 @@ namespace Proyecto_LFYA.Utilities
                         result += text[i];
                     }
                 }
-
                 return result;
             }
 
@@ -449,9 +501,57 @@ namespace Proyecto_LFYA.Utilities
         }
 
         //ACTIONS reader
-        private static void AddActions(string text)
+        private static void AddActions(string text, ref List<Action> actions)
         {
+            string[] IndividualActions = text.Split('}');
 
+            foreach (var Actions in IndividualActions)
+            {
+                if (!string.IsNullOrEmpty(Actions))
+                {
+                    Action newAction = new Action();
+
+                    string[] SeparatedValues = Actions.Split('{');
+
+                    string name = SeparatedValues[0];
+                    Dictionary<int, string> tokens = SplitActions(SeparatedValues[1]);
+
+                    newAction.ActionName = name;
+                    newAction.ActionValues = tokens;
+
+                    actions.Add(newAction);
+                }
+            }
+        }
+        
+        private static Dictionary<int, string> SplitActions(string setOfTokens)
+        {
+            Dictionary<int, string> ActionValues = new Dictionary<int, string>();
+
+            //Separar actions y numeros. Sus numeros seran pares y el valor sera impar.
+            string newText = setOfTokens.Replace("=", " ");
+            newText = Regex.Replace(newText, @"\s+", " ");
+            newText = newText.Trim();
+
+            string[] tokens = newText.Split();
+
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                int tokenNumber = 0;
+
+                if (int.TryParse(tokens[i], out tokenNumber))
+                {
+                    ActionValues.Add(tokenNumber, tokens[i+1].Replace("'", ""));
+
+                    i++;
+                }
+                else
+                {
+                    throw new Exception("Error al leer ACTIONS");
+                }
+            }
+
+            return ActionValues;
         }
     }
 }
