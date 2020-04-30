@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Proyecto_LFYA.Utilities.DFA_Procedures;
 
 namespace Proyecto_LFYA
 {

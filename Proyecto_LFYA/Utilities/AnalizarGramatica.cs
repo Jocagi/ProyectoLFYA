@@ -484,7 +484,7 @@ namespace Proyecto_LFYA.Utilities
                             functionName += actualChar;
                         }
 
-                        functionName.Replace("}", "");
+                        functionName = functionName.Replace("}", "");
                         functionName = functionName.Trim();
 
                         i += counter;
@@ -530,6 +530,7 @@ namespace Proyecto_LFYA.Utilities
 
             //Separar actions y numeros. Sus numeros seran pares y el valor sera impar.
             string newText = setOfTokens.Replace("=", " ");
+            newText = newText.Replace("'", " ");
             newText = Regex.Replace(newText, @"\s+", " ");
             newText = newText.Trim();
 
@@ -537,9 +538,7 @@ namespace Proyecto_LFYA.Utilities
 
             for (int i = 0; i < tokens.Length; i++)
             {
-                int tokenNumber = 0;
-
-                if (int.TryParse(tokens[i], out tokenNumber))
+                if (int.TryParse(tokens[i], out int tokenNumber))
                 {
                     ActionValues.Add(tokenNumber, tokens[i+1].Replace("'", ""));
 

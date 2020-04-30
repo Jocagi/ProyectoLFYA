@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Proyecto_LFYA.Utilities.DFA_Procedures;
 
 namespace Proyecto_LFYA.Utilities
 {

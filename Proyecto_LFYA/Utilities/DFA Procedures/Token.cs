@@ -15,8 +15,19 @@ namespace Proyecto_LFYA.Utilities.DFA_Procedures
 
         /// <summary>
         /// List of ascii codes for the last character in an individual token.
-        /// Code -1 means the token in nullable.
         /// </summary>
-        public List<int> LastPositions =new List<int>();
+        public List<char> FirstPositions = new List<char>();
+
+        /// <summary>
+        /// List of ascii codes for the last character in an individual token.
+        /// </summary>
+        public List<char> LastPositions = new List<char>();
+
+        public Token(int tokenNumber, List<char> FirstPosition, List<char> LastPosition)
+        {
+            this.TokenNumber = tokenNumber;
+            this.FirstPositions = FirstPosition;
+            this.LastPositions = LastPosition;
+        }
     }
 }

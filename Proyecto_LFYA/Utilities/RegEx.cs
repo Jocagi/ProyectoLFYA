@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Proyecto_LFYA.Utilities.DFA_Procedures;
 
 namespace Proyecto_LFYA.Utilities
 {

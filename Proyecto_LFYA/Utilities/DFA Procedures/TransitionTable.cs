@@ -47,7 +47,7 @@ namespace Proyecto_LFYA.Utilities
             }
 
             symbolsList.Remove(ExpressionCharacters.Epsilon);
-            symbolsList.Sort();
+            //symbolsList.Sort();
         }
         
         private void generateTransitions()

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using Proyecto_LFYA.Utilities.DFA_Procedures;
-using Action = Proyecto_LFYA.Utilities.DFA_Procedures.Action;
 
-namespace Proyecto_LFYA.Utilities
+namespace Proyecto_LFYA.Utilities.DFA_Procedures
 {
     public class ExpressionTree:ExpressionCharacters
     {
@@ -20,7 +19,7 @@ namespace Proyecto_LFYA.Utilities
         public Dictionary<string, string[]> sets = new Dictionary<string, string[]>();
 
         /// <summary>
-        /// List with token number and expeted final values.
+        /// List with token number and expected final values.
         /// </summary>
         public List<Token> tokens = new List<Token>();
         
@@ -36,8 +35,9 @@ namespace Proyecto_LFYA.Utilities
         /// Value=ActionName
         /// </summary>
         public Dictionary<int, string> actionReference = new Dictionary<int, string>();
-
         
+        private readonly Dictionary<int, string> leafNodeValues =  new Dictionary<int, string>(); 
+
         /// <summary>
         /// Regular expression that defines this tree
         /// </summary>
@@ -87,6 +87,9 @@ namespace Proyecto_LFYA.Utilities
             this.sets = sets;
             this.expression = expression;
 
+            this.actions = actions;
+            this.actionReference = reference;
+
             checkForEndCharacter(ref expression);
             Queue<string> Tokens = getTokensFromGrammarExpression(expression, sets);
             shuntingYard(Tokens);
@@ -95,6 +98,10 @@ namespace Proyecto_LFYA.Utilities
             setNullableNodes();
             setFirstPos();
             setLastPos();
+
+            setTokensListOfValues(tokenNumbers);
+
+            Debug.WriteLine("Tree created susccesfully");
         }
 
         private void checkForEndCharacter(ref string expression)
@@ -215,15 +222,15 @@ namespace Proyecto_LFYA.Utilities
                         //it is a special token (defined in set)
                     {
                         string value = "";
-                        char token = expression[i];
+                        string token = expression[i].ToString();
                         int counter = 0;
 
-                        while (token != ' ' && token.ToString() != Char_Separator && token.ToString() != Grouping_Close &&
+                        while (token != " " && token != Char_Separator && token != Grouping_Close && token != Grouping_Open &&
                                lenght > i + counter  && !isAnOperationChar(expression[i + counter].ToString()))
                         {
                             value += token;
                             counter++;
-                            token = expression[i + counter];
+                            token = expression[i + counter].ToString();
                         }
 
                         if (sets.ContainsKey(value))
@@ -480,6 +487,7 @@ namespace Proyecto_LFYA.Utilities
             {
                 if (i.element != Epsilon)
                 {
+                    leafNodeValues.Add(number, i.element);
                     i.number = number;
                     number++;
                 }
@@ -703,7 +711,6 @@ namespace Proyecto_LFYA.Utilities
 
             return cells;
         }
-
         private void getValuesOfNodes(Node i, ref List<string[]> cells, ref int j)
         {
             if (i.left != null)
@@ -721,6 +728,77 @@ namespace Proyecto_LFYA.Utilities
             {i.element, string.Join( ",", i.firstPos),
                 string.Join( ",", i.lastPos), i.nullable.ToString()});
 
+        }
+
+
+        //Set tokens
+        /// <summary>
+        /// Relates the token id with it's lastPosition values
+        /// </summary>
+        /// <param name="TokenNumbers">List with token id's in order of appearence in file</param>
+        private void setTokensListOfValues(List<int> TokenNumbers)
+        {
+            int tmp = 0;
+            setTokensListOfValues(this.root.left, TokenNumbers, ref tmp);
+        }
+        private void setTokensListOfValues(Node i, List<int> TokenNumbers, ref int actualToken)
+        {
+            if (i.element != Alternation)
+            {
+                tokens.Add(new Token(TokenNumbers[actualToken],
+                    getCharValuesOfNode(i.firstPos),
+                    getCharValuesOfNode(i.lastPos)));
+
+                actualToken++;
+            }
+            else
+            {
+                setTokensListOfValues(i.left, TokenNumbers, ref actualToken);
+                setTokensListOfValues(i.right, TokenNumbers, ref actualToken);
+            }
+        }
+
+        private List<char> getCharValuesOfNode(List<int> nodes)
+        {
+            List<char> chars = new List<char>();
+
+            foreach (var item in nodes)
+            {
+                string NodeValue = leafNodeValues[item];
+                
+                //If it is single char
+                if (NodeValue.Length == 1)
+                {
+                    chars.Add(NodeValue.ToCharArray()[0]);
+                }
+                //If it is a set
+                else if (NodeValue.Length > 1)
+                {
+                    string[] setNumbers = sets[NodeValue];
+
+                    foreach (var VAR in setNumbers)
+                    {
+                        if (VAR.Contains(","))
+                        {
+                            string[] limits = VAR.Split(',');
+                            int lowerlimit = int.Parse(limits[0]);
+                            int upperlimit = int.Parse(limits[1]);
+
+                            for (int actualChar = lowerlimit; actualChar <= upperlimit; actualChar++)
+                            {
+                                chars.Add((char) actualChar);
+                            }
+                        }
+                        else
+                        {
+                            int character = int.Parse(VAR);
+                            chars.Add((char) character);
+                        }
+                    }
+                }
+            }
+
+            return chars.Distinct().ToList();
         }
 
         private int countNodes()

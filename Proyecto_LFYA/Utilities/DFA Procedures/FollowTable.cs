@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Proyecto_LFYA.Utilities.DFA_Procedures;
 
 namespace Proyecto_LFYA.Utilities
 {
