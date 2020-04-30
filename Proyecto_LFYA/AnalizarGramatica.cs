@@ -1,13 +1,17 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.CSharp;
 using Proyecto_LFYA.Utilities;
 using Proyecto_LFYA.Utilities.DFA_Procedures;
 
@@ -144,5 +148,51 @@ namespace Proyecto_LFYA
                 MessageBox.Show(exception.Message);
             }
         }
+
+        private void gneratorButtom_Click(object sender, EventArgs e)
+        {
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+            string sourceCode = Resources.Resource1.Program;
+            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+            
+            string Output = "Scanner.exe";
+            
+            //Make sure to generate an EXE
+            CompilerParameters parameters = new CompilerParameters
+                { GenerateExecutable = true, OutputAssembly = Output};
+
+            //Add References
+            parameters.ReferencedAssemblies.AddRange(
+                Assembly.GetExecutingAssembly().GetReferencedAssemblies().
+                    Select(a => a.Name + ".dll").ToArray());
+
+            //Path to save the EXE
+            parameters.CompilerOptions = $" /out:{path}\\" + Output;
+
+            CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, sourceCode);
+            
+            if (results.Errors.Count > 0)
+            {
+                resultTextBox.ForeColor = Color.Red;
+                foreach (CompilerError CompErr in results.Errors)
+                {
+                    resultTextBox.Text = resultTextBox.Text +
+                                         @"Line number " + CompErr.Line +
+                                         @", Error Number: " + CompErr.ErrorNumber +
+                                         ", '" + CompErr.ErrorText + ";" +
+                                         Environment.NewLine + Environment.NewLine;
+                }
+            }
+            else
+            {
+                //Successful Compile
+                resultTextBox.ForeColor = Color.Magenta;
+                resultTextBox.Text = @"Success!";
+                //If we clicked run then launch our EXE
+                Process.Start(Output);
+            }
+        }
+
     }
 }
