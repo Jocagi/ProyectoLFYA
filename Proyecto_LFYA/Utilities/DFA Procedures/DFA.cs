@@ -6,7 +6,7 @@ namespace Proyecto_LFYA.Utilities
 {
     class DFA
     {
-        FollowTable states;
+        public FollowTable states;
 
         public DFA(ExpressionTree tree)
         {
