@@ -743,18 +743,29 @@ namespace Proyecto_LFYA.Utilities.DFA_Procedures
         }
         private void setTokensListOfValues(Node i, List<int> TokenNumbers, ref int actualToken)
         {
-            if (i.element != Alternation)
+            if (actualToken <= TokenNumbers.Count - 1)
             {
-                tokens.Add(new Token(TokenNumbers[actualToken],
-                    getCharValuesOfNode(i.firstPos),
-                    getCharValuesOfNode(i.lastPos)));
+                if (i.element == Alternation)
+                {
+                    //Right
+                    tokens.Add(new Token(TokenNumbers[TokenNumbers.Count - 1 - actualToken],
+                        getCharValuesOfNode(i.right.firstPos),
+                        getCharValuesOfNode(i.right.lastPos)));
 
-                actualToken++;
-            }
-            else
-            {
-                setTokensListOfValues(i.left, TokenNumbers, ref actualToken);
-                setTokensListOfValues(i.right, TokenNumbers, ref actualToken);
+                    actualToken++;
+
+                    //Left (last item)
+                    if (TokenNumbers.Count - actualToken == 1)
+                    {
+                        tokens.Add(new Token(TokenNumbers[0],
+                            getCharValuesOfNode(i.left.firstPos),
+                            getCharValuesOfNode(i.left.lastPos)));
+
+                        actualToken++;
+                    }
+
+                    setTokensListOfValues(i.left, TokenNumbers, ref actualToken);
+                }
             }
         }
 

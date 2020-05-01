@@ -35,7 +35,7 @@
             this.resultTextBox = new System.Windows.Forms.TextBox();
             this.grammarTextBox = new System.Windows.Forms.RichTextBox();
             this.detailsButton = new System.Windows.Forms.Button();
-            this.gneratorButtom = new System.Windows.Forms.Button();
+            this.generatorButtom = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -103,15 +103,17 @@
             this.detailsButton.Visible = false;
             this.detailsButton.Click += new System.EventHandler(this.detailsButton_Click);
             // 
-            // gneratorButtom
+            // generatorButtom
             // 
-            this.gneratorButtom.Location = new System.Drawing.Point(192, 524);
-            this.gneratorButtom.Name = "gneratorButtom";
-            this.gneratorButtom.Size = new System.Drawing.Size(174, 41);
-            this.gneratorButtom.TabIndex = 9;
-            this.gneratorButtom.Text = "Generar Scanner";
-            this.gneratorButtom.UseVisualStyleBackColor = true;
-            this.gneratorButtom.Click += new System.EventHandler(this.gneratorButtom_Click);
+            this.generatorButtom.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.generatorButtom.Location = new System.Drawing.Point(192, 524);
+            this.generatorButtom.Name = "generatorButtom";
+            this.generatorButtom.Size = new System.Drawing.Size(174, 41);
+            this.generatorButtom.TabIndex = 9;
+            this.generatorButtom.Text = "Generar Scanner";
+            this.generatorButtom.UseVisualStyleBackColor = true;
+            this.generatorButtom.Visible = false;
+            this.generatorButtom.Click += new System.EventHandler(this.gneratorButtom_Click);
             // 
             // AnalizarGramatica
             // 
@@ -119,7 +121,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(553, 609);
-            this.Controls.Add(this.gneratorButtom);
+            this.Controls.Add(this.generatorButtom);
             this.Controls.Add(this.detailsButton);
             this.Controls.Add(this.grammarTextBox);
             this.Controls.Add(this.resultTextBox);
@@ -150,6 +152,6 @@
         private System.Windows.Forms.TextBox resultTextBox;
         private System.Windows.Forms.RichTextBox grammarTextBox;
         private System.Windows.Forms.Button detailsButton;
-        private System.Windows.Forms.Button gneratorButtom;
+        private System.Windows.Forms.Button generatorButtom;
     }
 }

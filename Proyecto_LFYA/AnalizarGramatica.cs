@@ -68,6 +68,7 @@ namespace Proyecto_LFYA
         private void AnalizarArchivo(string file)
         {
             detailsButton.Visible = false;
+            generatorButtom.Visible = false;
             pathTextBox.Text = file;
 
             try
@@ -83,7 +84,7 @@ namespace Proyecto_LFYA
                     resultTextBox.ForeColor = Color.Green;
 
                     detailsButton.Visible = true;
-
+                    generatorButtom.Visible = true;
 
                     tree = Utilities.AnalizarGramatica.obtenerArbolDeGramatica(grammarTextBox.Text);
                     
@@ -153,7 +154,7 @@ namespace Proyecto_LFYA
         private void gneratorButtom_Click(object sender, EventArgs e)
         {
 
-            string sourceCode = ScannerGenerator.GetSourceCode();
+            string sourceCode = ScannerGenerator.GetSourceCode(tree);
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
             
             string Output = "Scanner.exe";
