@@ -231,6 +231,8 @@ namespace Proyecto_LFYA.Utilities
             Dictionary<int, string> references = actionReference;
             actionReference = new Dictionary<int, string>();
 
+            CheckReferences(references, actionsList);
+
             //Create tree
             if (token != "")
             {
@@ -299,6 +301,28 @@ namespace Proyecto_LFYA.Utilities
                 }
             }
             //If it ends, it is correct
+        }
+
+        private static void CheckReferences(Dictionary<int, string> references, List<Action> actionsList)
+        {
+            foreach (var item in references.Values)
+            {
+                bool notFound = true;
+
+                foreach (var action in actionsList)
+                {
+                    if (action.ActionName == item)
+                    {
+                        notFound = false;
+                        break;
+                    }
+                }
+
+                if (notFound)
+                {
+                    throw new Exception($"No existe el ACTION {item}");
+                }
+            }
         }
 
         //SET reader

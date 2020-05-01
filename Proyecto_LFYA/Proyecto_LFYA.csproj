@@ -84,7 +84,6 @@
     <Compile Include="Utilities\RegEx.cs" />
     <Compile Include="Utilities\DFA Procedures\Transition.cs" />
     <Compile Include="Utilities\DFA Procedures\TransitionTable.cs" />
-    <Compile Include="Utilities\Scanner\CS_CodeTools.cs" />
     <Compile Include="Utilities\Scanner\ScannerGenerator.cs" />
     <EmbeddedResource Include="AnalizarGramatica.resx">
       <DependentUpon>AnalizarGramatica.cs</DependentUpon>

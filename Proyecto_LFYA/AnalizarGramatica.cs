@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Microsoft.CSharp;
 using Proyecto_LFYA.Utilities;
 using Proyecto_LFYA.Utilities.DFA_Procedures;
+using Proyecto_LFYA.Utilities.Scanner;
 
 namespace Proyecto_LFYA
 {
@@ -113,7 +114,7 @@ namespace Proyecto_LFYA
                 resultTextBox.BackColor = Color.LightGray;
                 resultTextBox.ForeColor = Color.Crimson;
 
-                resultTextBox.Text = "Error en TOKENS";
+                resultTextBox.Text = @"Error en TOKENS";
                 detailsButton.Visible = false;
                 
                 MessageBox.Show(ex.Message);
@@ -151,13 +152,13 @@ namespace Proyecto_LFYA
 
         private void gneratorButtom_Click(object sender, EventArgs e)
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-            string sourceCode = Resources.Resource1.Program;
+            string sourceCode = ScannerGenerator.GetSourceCode();
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
             
             string Output = "Scanner.exe";
-            
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + Output;
+
             //Make sure to generate an EXE
             CompilerParameters parameters = new CompilerParameters
                 { GenerateExecutable = true, OutputAssembly = Output};
@@ -168,7 +169,7 @@ namespace Proyecto_LFYA
                     Select(a => a.Name + ".dll").ToArray());
 
             //Path to save the EXE
-            parameters.CompilerOptions = $" /out:{path}\\" + Output;
+            parameters.CompilerOptions = $" /out:{path}";
 
             CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, sourceCode);
             
@@ -190,7 +191,7 @@ namespace Proyecto_LFYA
                 resultTextBox.ForeColor = Color.Magenta;
                 resultTextBox.Text = @"Success!";
                 //If we clicked run then launch our EXE
-                Process.Start(Output);
+                Process.Start(path);
             }
         }
 

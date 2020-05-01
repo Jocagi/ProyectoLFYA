@@ -12,7 +12,7 @@ namespace Scanner
             Stack<char> Input = new Stack<char>();
 
             Inicio:
-            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.ForegroundColor = </TitleColor>;
 
             Console.WriteLine(" __                                 ");
             Console.WriteLine("/ _\\ ___ __ _ _ __  _ __   ___ _ __ ");
@@ -74,23 +74,22 @@ namespace Scanner
             
             Dictionary<int, List<char>> Character_Token_First = new Dictionary<int, List<char>>
             {
-                {1, new List<char> {'a', 'b', 'c'}}
+                </FirstPos>
             };
 
             Dictionary<List<char>, int> Character_Token_Last = new Dictionary<List<char>, int>
             {
-                {new List<char> {'a', 'b', 'c'}, 1}
+                </LastPos>
             };
 
             Dictionary<string, int> ReservadasValues = new Dictionary<string, int>
             {
-                {"bcccc", 14},
-                {"bccccc", 15}
+                </Reservadas>
             };
              
             List<int> TokensConReferencia = new List<int>
             {
-                1, 99
+                </Referencias>
             };
             
             foreach (var Pair in Character_Token_Last)
@@ -128,49 +127,7 @@ namespace Scanner
                 {
                     switch (Estado)
                     {
-                        //States and transitions of DFA
-                        case 0:
-                            if (actualChar == 'a')
-                            {
-                                Estado = 2;
-                            }
-                            else if (actualChar == 'b')
-                            {
-                                Estado = 1;
-                            }
-                            else if (actualChar == 'c')
-                            {
-                                Estado = 0;
-                            }
-                            else
-                            {
-                                goto Error;
-                            }
-                            break;
-                        case 1:
-                            if (actualChar == 'c')
-                            {
-                                Estado = 1;
-                            }
-                            else
-                            {
-                                goto Valido;
-                            }
-                            break;
-                        case 2:
-                            if (actualChar == 'c')
-                            {
-                                Estado = 0;
-                            }
-                            else if(actualChar == 'd')
-                            {
-                                Estado = 0;
-                            }
-                            else
-                            {
-                                goto Valido;
-                            }
-                            break;
+                        </States>
 
                         case -1:
                             Valido:
@@ -202,7 +159,7 @@ namespace Scanner
             return;
 
             CheckForAcceptedStates:
-            if (Estado == 2 || Estado == 1) //Estados de aceptacion
+            if (</Aceptacion>) 
             {
                 Valido(ref actualText);
             }
