@@ -34,7 +34,15 @@ namespace Scanner
             Thread.Sleep(800);
             Console.Write(".\n");
 
-            AnalizarTexto(Input);
+            try
+            {
+                AnalizarTexto(Input);
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(e);
+            }
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nPresiona cualquier tecla para continuar.");
@@ -64,7 +72,7 @@ namespace Scanner
         static void Valido(ref string token)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\n" + token + " = " + getTokenNumber(token));
+            Console.WriteLine("\n" + token + " » " + getTokenNumber(token));
             token = "";
         }
 
@@ -106,9 +114,9 @@ namespace Scanner
                 {
                     if (TokensConReferencia.Contains(Pair.Value))
                     {
-                        if (ReservadasValues.Keys.Contains(text))
+                        if (ReservadasValues.Keys.Contains(text.ToUpper()))
                         {
-                            return ReservadasValues[text];
+                            return ReservadasValues[text.ToUpper()];
                         }
                     }
                     return Pair.Value;
@@ -169,13 +177,16 @@ namespace Scanner
             return;
 
             CheckForAcceptedStates:
-            if (</Aceptacion>) 
+            if (!string.IsNullOrEmpty(actualText) && !string.IsNullOrWhiteSpace(actualText))
             {
-                Valido(ref actualText);
-            }
-            else
-            {
-                Error();
+                if (</Aceptacion>) 
+                {
+                    Valido(ref actualText);
+                }
+                else
+                {
+                    Error();
+                }   
             }
             goto Inicio;
         }

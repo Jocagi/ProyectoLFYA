@@ -150,8 +150,8 @@ namespace Proyecto_LFYA.Utilities.Scanner
                 foreach (var token in item.ActionValues)
                 {
                     output += (output == "")
-                        ? $"{{ \"{token.Value}\" , {token.Key} }}"
-                        : $" , {{ \"{token.Value}\" , {token.Key} }}";
+                        ? $"{{ \"{token.Value.ToUpper()}\" , {token.Key} }}"
+                        : $" , {{ \"{token.Value.ToUpper()}\" , {token.Key} }}";
                 }
             }
 
