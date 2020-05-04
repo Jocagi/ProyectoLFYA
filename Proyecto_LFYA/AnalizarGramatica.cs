@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.CSharp;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Ookii.Dialogs.WinForms;
 using Proyecto_LFYA.Utilities;
 using Proyecto_LFYA.Utilities.DFA_Procedures;
 using Proyecto_LFYA.Utilities.Scanner;
@@ -157,18 +158,21 @@ namespace Proyecto_LFYA
 
             string sourceCode = ScannerGenerator.GetSourceCode(tree);
 
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            dialog.IsFolderPicker = true;
+            VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog
+            {
+                RootFolder = Environment.SpecialFolder.Desktop,
+                SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                ShowNewFolderButton = true
+            };
             
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string Output = "Scanner.exe";
-                string path = dialog.FileName + "\\" + Output;
+                string path = dialog.SelectedPath + "\\" + Output;
 
                 //-----------Write Code-----------
 
-                File.WriteAllText(Path.Combine(dialog.FileName, "Scanner.cs"), sourceCode);
+                File.WriteAllText(Path.Combine(dialog.SelectedPath, "Scanner.cs"), sourceCode);
 
                 //------------Compiler------------
 
