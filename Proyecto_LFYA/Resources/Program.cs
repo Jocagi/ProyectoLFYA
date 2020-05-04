@@ -130,7 +130,7 @@ namespace Scanner
                 actualText = actualText.Trim();
                 char actualChar = Input.Pop();
 
-                if (actualChar != ' ' || actualChar > 0)
+                if (actualChar != ' ' && actualChar != 0)
                 {
                     switch (Estado)
                     {

@@ -168,7 +168,7 @@ namespace Proyecto_LFYA
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string Output = "Scanner.exe";
-                string path = dialog.SelectedPath + "\\" + Output;
+                string path = Path.Combine(dialog.SelectedPath, Output);
 
                 //-----------Write Code-----------
 
@@ -180,16 +180,14 @@ namespace Proyecto_LFYA
 
                 //Make sure to generate an EXE
                 CompilerParameters parameters = new CompilerParameters
-                    { GenerateExecutable = true, OutputAssembly = Output };
+                    { GenerateExecutable = true, OutputAssembly = path };
 
                 //Add References
                 parameters.ReferencedAssemblies.AddRange(
                     Assembly.GetExecutingAssembly().GetReferencedAssemblies().
                         Select(a => a.Name + ".dll").ToArray());
-
-                //Path to save the EXE
-                parameters.CompilerOptions = $" /out:{path}";
-
+                
+                
                 CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, sourceCode);
 
                 if (results.Errors.Count > 0)
