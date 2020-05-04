@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Scanner
 {
@@ -70,8 +71,14 @@ namespace Scanner
         static int getTokenNumber(string text)
         {
             char firstCharacterFromText = text[0];
-            char lastCharacterFromText = text[text.Length - 1];
-            
+
+            char lastCharacterFromText = text[0];
+
+            if (text.Length > 1)
+            {
+                lastCharacterFromText = text[text.Length - 1];
+            }
+
             Dictionary<int, List<char>> Character_Token_First = new Dictionary<int, List<char>>
             {
                 </FirstPos>
@@ -123,7 +130,7 @@ namespace Scanner
                 actualText = actualText.Trim();
                 char actualChar = Input.Pop();
 
-                if (actualChar != ' ')
+                if (actualChar != ' ' || actualChar > 0)
                 {
                     switch (Estado)
                     {
@@ -131,7 +138,10 @@ namespace Scanner
 
                         case -1:
                             Valido:
-                            Valido(ref actualText);
+                            if (actualText.Length > 0)
+                            {
+                                Valido(ref actualText);
+                            }
                             Estado = 0;
                             Input.Push(actualChar);
                             actualChar = ' ';

@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.CSharp;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Proyecto_LFYA.Utilities;
 using Proyecto_LFYA.Utilities.DFA_Procedures;
 using Proyecto_LFYA.Utilities.Scanner;
@@ -155,45 +156,61 @@ namespace Proyecto_LFYA
         {
 
             string sourceCode = ScannerGenerator.GetSourceCode(tree);
-            CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            dialog.IsFolderPicker = true;
             
-            string Output = "Scanner.exe";
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + Output;
-
-            //Make sure to generate an EXE
-            CompilerParameters parameters = new CompilerParameters
-                { GenerateExecutable = true, OutputAssembly = Output};
-
-            //Add References
-            parameters.ReferencedAssemblies.AddRange(
-                Assembly.GetExecutingAssembly().GetReferencedAssemblies().
-                    Select(a => a.Name + ".dll").ToArray());
-
-            //Path to save the EXE
-            parameters.CompilerOptions = $" /out:{path}";
-
-            CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, sourceCode);
-            
-            if (results.Errors.Count > 0)
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                resultTextBox.ForeColor = Color.Red;
-                foreach (CompilerError CompErr in results.Errors)
+                string Output = "Scanner.exe";
+                string path = dialog.FileName + "\\" + Output;
+
+                //-----------Write Code-----------
+
+                File.WriteAllText(Path.Combine(dialog.FileName, "Scanner.cs"), sourceCode);
+
+                //------------Compiler------------
+
+                CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+
+                //Make sure to generate an EXE
+                CompilerParameters parameters = new CompilerParameters
+                    { GenerateExecutable = true, OutputAssembly = Output };
+
+                //Add References
+                parameters.ReferencedAssemblies.AddRange(
+                    Assembly.GetExecutingAssembly().GetReferencedAssemblies().
+                        Select(a => a.Name + ".dll").ToArray());
+
+                //Path to save the EXE
+                parameters.CompilerOptions = $" /out:{path}";
+
+                CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters, sourceCode);
+
+                if (results.Errors.Count > 0)
                 {
-                    resultTextBox.Text = resultTextBox.Text +
-                                         @"Line number " + CompErr.Line +
-                                         @", Error Number: " + CompErr.ErrorNumber +
-                                         ", '" + CompErr.ErrorText + ";" +
-                                         Environment.NewLine + Environment.NewLine;
+                    resultTextBox.ForeColor = Color.Red;
+                    foreach (CompilerError CompErr in results.Errors)
+                    {
+                        resultTextBox.Text = resultTextBox.Text +
+                                             @"Line number " + CompErr.Line +
+                                             @", Error Number: " + CompErr.ErrorNumber +
+                                             ", '" + CompErr.ErrorText + ";" +
+                                             Environment.NewLine + Environment.NewLine;
+                    }
+                }
+                else
+                {
+                    //Successful Compile
+                    resultTextBox.ForeColor = Color.Magenta;
+                    resultTextBox.Text = @"Success!";
+                    //If we clicked run then launch our EXE
+                    Process.Start(path);
                 }
             }
-            else
-            {
-                //Successful Compile
-                resultTextBox.ForeColor = Color.Magenta;
-                resultTextBox.Text = @"Success!";
-                //If we clicked run then launch our EXE
-                Process.Start(path);
-            }
+            
+            
         }
 
     }
