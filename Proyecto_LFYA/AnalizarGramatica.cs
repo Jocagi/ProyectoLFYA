@@ -72,6 +72,10 @@ namespace Proyecto_LFYA
             detailsButton.Visible = false;
             generatorButtom.Visible = false;
             pathTextBox.Text = file;
+            
+            //Return to default color
+            grammarTextBox.Select(0, grammarTextBox.Lines.Length);
+            grammarTextBox.SelectionColor = Color.Black;
 
             try
             {
@@ -119,7 +123,8 @@ namespace Proyecto_LFYA
 
                 resultTextBox.Text = @"Error en TOKENS";
                 detailsButton.Visible = false;
-                
+                generatorButtom.Visible = true;
+
                 MessageBox.Show(ex.Message);
 
                 //Show in red all lines in tokens
@@ -193,6 +198,7 @@ namespace Proyecto_LFYA
                 if (results.Errors.Count > 0)
                 {
                     resultTextBox.ForeColor = Color.Red;
+                    resultTextBox.Text = "";
                     foreach (CompilerError CompErr in results.Errors)
                     {
                         resultTextBox.Text = resultTextBox.Text +

@@ -96,7 +96,15 @@ namespace Proyecto_LFYA.Utilities.Scanner
 
             for (int i = 0; i < list.Count; i++)
             {
-                output += $"'{list[i]}'";
+                if (list[i] != '\'')
+                {
+                    output += $"'{list[i]}'";
+                }
+                else
+                {
+                    output += "(char) 39";
+                }
+
 
                 if (i != list.Count - 1)
                 {
@@ -303,7 +311,14 @@ namespace Proyecto_LFYA.Utilities.Scanner
             }
             else if (transition.symbol.Length == 1)//It is a single char
             {
-                return $"actualChar == '{transition.symbol}'";
+                if (transition.symbol != "'")
+                {
+                    return $"actualChar == '{transition.symbol}'";
+                }
+                else
+                {
+                    return "actualChar == 39";
+                }
             }
             else
             {

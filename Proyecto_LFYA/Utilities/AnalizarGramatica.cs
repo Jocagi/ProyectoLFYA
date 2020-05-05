@@ -19,7 +19,7 @@ namespace Proyecto_LFYA.Utilities
         private static string expresionTOKEN 
             = "( *TOKEN *[0-9]+ *= *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(+( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\(|\\)|\\||\\*|\\+|({ *[A-Z]+\\(\\) *}))|( *\\( *((([A-Z]+)|('([Simbolo]|[A-Z]|[a-z]|[0-9]) *' *)|(\\(( *([A-Z]|[Simbolo]) *)+\\))| |\\?|\\(|\\)|\\||\\*|\\+|({ *[A-Z]+\\(\\) *})))+ *\\)+ *))+ *)+#";
         private static string expresionACTIONSYERROR 
-            = "( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'([A-Z]|[a-z]|[0-9])+')+ *} *([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'([A-Z]|[a-z]|[0-9])+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
+            = "( *ACTIONS +RESERVADAS *\\( *\\) *{( *[0-9]+ *= *'([A-Z]|[a-z]|[0-9]|[Simbolo])+')+ *} *([A-Z]+ *\\( *\\) *{( *[0-9]+ *= *'([A-Z]|[a-z]|[0-9]|[Simbolo])+')+ *})*)( *[A-Z]+ *= *[0-9]+)+ *#";
 
         public static Dictionary<int, string> actionReference = new Dictionary<int, string>();
 
@@ -334,7 +334,7 @@ namespace Proyecto_LFYA.Utilities
             string[] line = text.Split('=');
 
             setName = line[0].Trim();//this is the set name
-            line[1] = line[1].Trim();//this are the values
+            line[1] = line[1].Replace(" ", "");//this are the values
 
             string[] values = line[1].Split('+');
 
@@ -349,7 +349,7 @@ namespace Proyecto_LFYA.Utilities
                 {
                     if (!string.IsNullOrEmpty(i))
                     {
-                        Limits.Add(i.Trim());
+                        Limits.Add(i);
                     }   
                 }
                 
