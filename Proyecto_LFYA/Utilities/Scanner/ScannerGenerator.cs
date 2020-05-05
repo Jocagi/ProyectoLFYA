@@ -366,6 +366,9 @@ namespace Proyecto_LFYA.Utilities.Scanner
                 //break actual state
                 actualCase += $"break;\r\n";
 
+                //Add spaces to look nice
+                actualCase = actualCase.Replace("\r\n", "\r\n                        ");
+
                 output += actualCase;
             }
 
